@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as JoinRouteImport } from './routes/join'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AddStepsRouteImport } from './routes/add-steps'
 import { Route as IndexRouteImport } from './routes/index'
 
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JoinRoute = JoinRouteImport.update({
   id: '/join',
   path: '/join',
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/add-steps': typeof AddStepsRoute
   '/auth': typeof AuthRoute
   '/join': typeof JoinRoute
+  '/leaderboard': typeof LeaderboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add-steps': typeof AddStepsRoute
   '/auth': typeof AuthRoute
   '/join': typeof JoinRoute
+  '/leaderboard': typeof LeaderboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/add-steps': typeof AddStepsRoute
   '/auth': typeof AuthRoute
   '/join': typeof JoinRoute
+  '/leaderboard': typeof LeaderboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/add-steps' | '/auth' | '/join'
+  fullPaths: '/' | '/add-steps' | '/auth' | '/join' | '/leaderboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/add-steps' | '/auth' | '/join'
-  id: '__root__' | '/' | '/add-steps' | '/auth' | '/join'
+  to: '/' | '/add-steps' | '/auth' | '/join' | '/leaderboard'
+  id: '__root__' | '/' | '/add-steps' | '/auth' | '/join' | '/leaderboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,10 +76,18 @@ export interface RootRouteChildren {
   AddStepsRoute: typeof AddStepsRoute
   AuthRoute: typeof AuthRoute
   JoinRoute: typeof JoinRoute
+  LeaderboardRoute: typeof LeaderboardRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/join': {
       id: '/join'
       path: '/join'
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   AddStepsRoute: AddStepsRoute,
   AuthRoute: AuthRoute,
   JoinRoute: JoinRoute,
+  LeaderboardRoute: LeaderboardRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
