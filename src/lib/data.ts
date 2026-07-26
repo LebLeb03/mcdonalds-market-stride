@@ -41,6 +41,9 @@ export type Entry = {
   entry_method: string;
   proof_url: string | null;
   approval_status: "approved" | "pending" | "rejected";
+  rejection_reason?: string | null;
+  approved_by?: string | null;
+  approved_at?: string | null;
   created_at: string;
 };
 
