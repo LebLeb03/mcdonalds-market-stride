@@ -228,7 +228,7 @@ function AddStepsPage() {
         <SectionTitle
           title="Step history"
           right={
-            <Link to="/history" className="text-xs font-bold text-primary">
+            <Link to="/profile" className="text-xs font-bold text-primary">
               View all
             </Link>
           }
