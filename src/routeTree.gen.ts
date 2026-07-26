@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AddStepsRouteImport } from './routes/add-steps'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RestaurantsIndexRouteImport } from './routes/restaurants.index'
+import { Route as RestaurantsStoreIdRouteImport } from './routes/restaurants.$storeId'
 
 const MarketRoute = MarketRouteImport.update({
   id: '/market',
@@ -52,6 +53,11 @@ const RestaurantsIndexRoute = RestaurantsIndexRouteImport.update({
   path: '/restaurants/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RestaurantsStoreIdRoute = RestaurantsStoreIdRouteImport.update({
+  id: '/restaurants/$storeId',
+  path: '/restaurants/$storeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/join': typeof JoinRoute
   '/leaderboard': typeof LeaderboardRoute
   '/market': typeof MarketRoute
+  '/restaurants/$storeId': typeof RestaurantsStoreIdRoute
   '/restaurants/': typeof RestaurantsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/join': typeof JoinRoute
   '/leaderboard': typeof LeaderboardRoute
   '/market': typeof MarketRoute
+  '/restaurants/$storeId': typeof RestaurantsStoreIdRoute
   '/restaurants': typeof RestaurantsIndexRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/join': typeof JoinRoute
   '/leaderboard': typeof LeaderboardRoute
   '/market': typeof MarketRoute
+  '/restaurants/$storeId': typeof RestaurantsStoreIdRoute
   '/restaurants/': typeof RestaurantsIndexRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/join'
     | '/leaderboard'
     | '/market'
+    | '/restaurants/$storeId'
     | '/restaurants/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/join'
     | '/leaderboard'
     | '/market'
+    | '/restaurants/$storeId'
     | '/restaurants'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/join'
     | '/leaderboard'
     | '/market'
+    | '/restaurants/$storeId'
     | '/restaurants/'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   JoinRoute: typeof JoinRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MarketRoute: typeof MarketRoute
+  RestaurantsStoreIdRoute: typeof RestaurantsStoreIdRoute
   RestaurantsIndexRoute: typeof RestaurantsIndexRoute
 }
 
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RestaurantsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/restaurants/$storeId': {
+      id: '/restaurants/$storeId'
+      path: '/restaurants/$storeId'
+      fullPath: '/restaurants/$storeId'
+      preLoaderRoute: typeof RestaurantsStoreIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   JoinRoute: JoinRoute,
   LeaderboardRoute: LeaderboardRoute,
   MarketRoute: MarketRoute,
+  RestaurantsStoreIdRoute: RestaurantsStoreIdRoute,
   RestaurantsIndexRoute: RestaurantsIndexRoute,
 }
 export const routeTree = rootRouteImport
