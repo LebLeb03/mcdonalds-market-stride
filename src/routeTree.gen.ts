@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as JoinRouteImport } from './routes/join'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AddStepsRouteImport } from './routes/add-steps'
 import { Route as IndexRouteImport } from './routes/index'
 
 const JoinRoute = JoinRouteImport.update({
@@ -23,6 +24,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AddStepsRoute = AddStepsRouteImport.update({
+  id: '/add-steps',
+  path: '/add-steps',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,30 +37,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/add-steps': typeof AddStepsRoute
   '/auth': typeof AuthRoute
   '/join': typeof JoinRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/add-steps': typeof AddStepsRoute
   '/auth': typeof AuthRoute
   '/join': typeof JoinRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/add-steps': typeof AddStepsRoute
   '/auth': typeof AuthRoute
   '/join': typeof JoinRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/join'
+  fullPaths: '/' | '/add-steps' | '/auth' | '/join'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/join'
-  id: '__root__' | '/' | '/auth' | '/join'
+  to: '/' | '/add-steps' | '/auth' | '/join'
+  id: '__root__' | '/' | '/add-steps' | '/auth' | '/join'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AddStepsRoute: typeof AddStepsRoute
   AuthRoute: typeof AuthRoute
   JoinRoute: typeof JoinRoute
 }
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/add-steps': {
+      id: '/add-steps'
+      path: '/add-steps'
+      fullPath: '/add-steps'
+      preLoaderRoute: typeof AddStepsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AddStepsRoute: AddStepsRoute,
   AuthRoute: AuthRoute,
   JoinRoute: JoinRoute,
 }
