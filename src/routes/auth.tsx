@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Footprints } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/data";
+import mark from "@/assets/mcd-mark.png.asset.json";
+import wordmark from "@/assets/mcd-wordmark.png.asset.json";
+
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -68,10 +70,18 @@ function AuthPage() {
     <div className="hero-arches flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center text-primary-foreground">
-          <div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-accent text-accent-foreground">
-            <Footprints className="h-8 w-8" />
-          </div>
-          <h1 className="mt-4 text-3xl">McSteps Market Challenge</h1>
+          <img
+            src={mark.url}
+            alt="McDonald's arches"
+            className="mx-auto h-20 w-20 rounded-3xl shadow-lg"
+          />
+          <img
+            src={wordmark.url}
+            alt="McDonald's"
+            className="mx-auto mt-4 h-8 w-auto"
+          />
+          <h1 className="mt-3 text-3xl">Market Step Challenge</h1>
+
           <p className="mt-2 text-sm text-primary-foreground/85">
             Crew and managers walking together for restaurant bragging rights.
           </p>

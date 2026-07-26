@@ -9,6 +9,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { isManagerRole, useProfile } from "@/lib/data";
+import wordmark from "@/assets/mcd-wordmark.png.asset.json";
+
 
 const NAV = [
   { to: "/", label: "Home", icon: Home },
@@ -37,12 +39,16 @@ export function AppShell({
       <header className="hero-arches px-4 pb-8 pt-6 text-primary-foreground sm:px-8">
         <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-              McSteps Market Challenge
-            </p>
-            <h1 className="mt-1 truncate text-2xl sm:text-3xl">{title}</h1>
+            <img
+              src={wordmark.url}
+              alt="McDonald's"
+              className="h-7 w-auto sm:h-8"
+              loading="eager"
+            />
+            <h1 className="mt-2 truncate text-2xl sm:text-3xl">{title}</h1>
             {subtitle ? <p className="mt-1 text-sm text-primary-foreground/80">{subtitle}</p> : null}
           </div>
+
           <div className="flex shrink-0 items-center gap-2">
             {manager ? (
               <Link
