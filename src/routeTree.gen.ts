@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
@@ -21,6 +22,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as RestaurantsIndexRouteImport } from './routes/restaurants.index'
 import { Route as RestaurantsStoreIdRouteImport } from './routes/restaurants.$storeId'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketRoute = MarketRouteImport.update({
   id: '/market',
   path: '/market',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof LeaderboardRoute
   '/manager': typeof ManagerRoute
   '/market': typeof MarketRoute
+  '/profile': typeof ProfileRoute
   '/restaurants/$storeId': typeof RestaurantsStoreIdRoute
   '/restaurants/': typeof RestaurantsIndexRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof LeaderboardRoute
   '/manager': typeof ManagerRoute
   '/market': typeof MarketRoute
+  '/profile': typeof ProfileRoute
   '/restaurants/$storeId': typeof RestaurantsStoreIdRoute
   '/restaurants': typeof RestaurantsIndexRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/leaderboard': typeof LeaderboardRoute
   '/manager': typeof ManagerRoute
   '/market': typeof MarketRoute
+  '/profile': typeof ProfileRoute
   '/restaurants/$storeId': typeof RestaurantsStoreIdRoute
   '/restaurants/': typeof RestaurantsIndexRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/manager'
     | '/market'
+    | '/profile'
     | '/restaurants/$storeId'
     | '/restaurants/'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/manager'
     | '/market'
+    | '/profile'
     | '/restaurants/$storeId'
     | '/restaurants'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/manager'
     | '/market'
+    | '/profile'
     | '/restaurants/$storeId'
     | '/restaurants/'
   fileRoutesById: FileRoutesById
@@ -169,12 +181,20 @@ export interface RootRouteChildren {
   LeaderboardRoute: typeof LeaderboardRoute
   ManagerRoute: typeof ManagerRoute
   MarketRoute: typeof MarketRoute
+  ProfileRoute: typeof ProfileRoute
   RestaurantsStoreIdRoute: typeof RestaurantsStoreIdRoute
   RestaurantsIndexRoute: typeof RestaurantsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/market': {
       id: '/market'
       path: '/market'
@@ -265,6 +285,7 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardRoute: LeaderboardRoute,
   ManagerRoute: ManagerRoute,
   MarketRoute: MarketRoute,
+  ProfileRoute: ProfileRoute,
   RestaurantsStoreIdRoute: RestaurantsStoreIdRoute,
   RestaurantsIndexRoute: RestaurantsIndexRoute,
 }

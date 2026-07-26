@@ -40,7 +40,7 @@ function ProfilePage() {
   }, [profile?.daily_goal]);
 
   const save = useMutation({
-    mutationFn: async (patch: Record<string, unknown>) => {
+    mutationFn: async (patch: { daily_goal?: number; participates_in_challenges?: boolean }) => {
       const { error } = await supabase.from("profiles").update(patch).eq("user_id", user!.id);
       if (error) throw error;
     },
