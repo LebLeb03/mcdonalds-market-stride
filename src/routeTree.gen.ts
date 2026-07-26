@@ -13,6 +13,7 @@ import { Route as MarketRouteImport } from './routes/market'
 import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as JoinRouteImport } from './routes/join'
+import { Route as ChallengesRouteImport } from './routes/challenges'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AddStepsRouteImport } from './routes/add-steps'
 import { Route as IndexRouteImport } from './routes/index'
@@ -37,6 +38,11 @@ const LeaderboardRoute = LeaderboardRouteImport.update({
 const JoinRoute = JoinRouteImport.update({
   id: '/join',
   path: '/join',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChallengesRoute = ChallengesRouteImport.update({
+  id: '/challenges',
+  path: '/challenges',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add-steps': typeof AddStepsRoute
   '/auth': typeof AuthRoute
+  '/challenges': typeof ChallengesRoute
   '/join': typeof JoinRoute
   '/leaderboard': typeof LeaderboardRoute
   '/manager': typeof ManagerRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add-steps': typeof AddStepsRoute
   '/auth': typeof AuthRoute
+  '/challenges': typeof ChallengesRoute
   '/join': typeof JoinRoute
   '/leaderboard': typeof LeaderboardRoute
   '/manager': typeof ManagerRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/add-steps': typeof AddStepsRoute
   '/auth': typeof AuthRoute
+  '/challenges': typeof ChallengesRoute
   '/join': typeof JoinRoute
   '/leaderboard': typeof LeaderboardRoute
   '/manager': typeof ManagerRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/add-steps'
     | '/auth'
+    | '/challenges'
     | '/join'
     | '/leaderboard'
     | '/manager'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/add-steps'
     | '/auth'
+    | '/challenges'
     | '/join'
     | '/leaderboard'
     | '/manager'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/add-steps'
     | '/auth'
+    | '/challenges'
     | '/join'
     | '/leaderboard'
     | '/manager'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddStepsRoute: typeof AddStepsRoute
   AuthRoute: typeof AuthRoute
+  ChallengesRoute: typeof ChallengesRoute
   JoinRoute: typeof JoinRoute
   LeaderboardRoute: typeof LeaderboardRoute
   ManagerRoute: typeof ManagerRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/join'
       fullPath: '/join'
       preLoaderRoute: typeof JoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/challenges': {
+      id: '/challenges'
+      path: '/challenges'
+      fullPath: '/challenges'
+      preLoaderRoute: typeof ChallengesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -219,6 +239,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddStepsRoute: AddStepsRoute,
   AuthRoute: AuthRoute,
+  ChallengesRoute: ChallengesRoute,
   JoinRoute: JoinRoute,
   LeaderboardRoute: LeaderboardRoute,
   ManagerRoute: ManagerRoute,
