@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Footprints } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/data";
+import mark from "@/assets/mcd-mark.png.asset.json";
+import wordmark from "@/assets/mcd-wordmark.png.asset.json";
+
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
