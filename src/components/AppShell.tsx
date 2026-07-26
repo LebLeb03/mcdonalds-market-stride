@@ -1,0 +1,80 @@
+import type { ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
+import {
+  Home,
+  Trophy,
+  ListOrdered,
+  Store as StoreIcon,
+  User as UserIcon,
+  ShieldCheck,
+} from "lucide-react";
+import { isManagerRole, useProfile } from "@/lib/data";
+
+const NAV = [
+  { to: "/", label: "Home", icon: Home },
+  { to: "/challenges", label: "Challenges", icon: Trophy },
+  { to: "/leaderboard", label: "Leaderboards", icon: ListOrdered },
+  { to: "/restaurants", label: "Restaurants", icon: StoreIcon },
+  { to: "/profile", label: "Profile", icon: UserIcon },
+] as const;
+
+export function AppShell({
+  title,
+  subtitle,
+  action,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  const { data: profile } = useProfile();
+  const manager = isManagerRole(profile?.role);
+
+  return (
+    <div className="min-h-screen bg-background pb-24">
+      <header className="hero-arches px-4 pb-8 pt-6 text-primary-foreground sm:px-8">
+        <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              McSteps Market Challenge
+            </p>
+            <h1 className="mt-1 truncate text-2xl sm:text-3xl">{title}</h1>
+            {subtitle ? <p className="mt-1 text-sm text-primary-foreground/80">{subtitle}</p> : null}
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            {manager ? (
+              <Link
+                to="/manager"
+                className="grid h-10 w-10 place-items-center rounded-2xl bg-accent text-accent-foreground shadow-sm"
+                aria-label="Manager tools"
+              >
+                <ShieldCheck className="h-5 w-5" />
+              </Link>
+            ) : null}
+            {action}
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto -mt-4 max-w-6xl space-y-4 px-4 sm:px-8">{children}</main>
+
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur">
+        <div className="mx-auto flex max-w-2xl items-stretch justify-between px-2 py-1">
+          {NAV.map(({ to, label, icon: Icon }) => (
+            <Link
+              key={to}
+              to={to}
+              activeOptions={{ exact: to === "/" }}
+              className="flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-2 text-[11px] font-semibold text-muted-foreground transition-colors data-[status=active]:text-primary"
+            >
+              <Icon className="h-5 w-5" />
+              <span className="truncate">{label}</span>
+            </Link>
+          ))}
+        </div>
+      </nav>
+    </div>
+  );
+}
