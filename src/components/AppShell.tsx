@@ -9,6 +9,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { isManagerRole, useProfile } from "@/lib/data";
+import wordmark from "@/assets/mcd-wordmark.png.asset.json";
+
 
 const NAV = [
   { to: "/", label: "Home", icon: Home },
