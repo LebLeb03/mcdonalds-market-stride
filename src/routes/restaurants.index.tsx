@@ -5,7 +5,7 @@ import { fmt, useMarketData, useProfile } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import { Card, Loading, Pills, ProgressBar, RankMove, SectionTitle } from "@/components/kit";
 
-export const Route = createFileRoute("/restaurants")({
+export const Route = createFileRoute("/restaurants/")({
   head: () => ({
     meta: [
       { title: "Restaurant directory — McSteps Market Challenge" },

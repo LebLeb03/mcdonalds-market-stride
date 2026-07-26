@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RestaurantsRouteImport } from './routes/restaurants'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as JoinRouteImport } from './routes/join'
@@ -16,6 +17,11 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AddStepsRouteImport } from './routes/add-steps'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RestaurantsRoute = RestaurantsRouteImport.update({
+  id: '/restaurants',
+  path: '/restaurants',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketRoute = MarketRouteImport.update({
   id: '/market',
   path: '/market',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/join': typeof JoinRoute
   '/leaderboard': typeof LeaderboardRoute
   '/market': typeof MarketRoute
+  '/restaurants': typeof RestaurantsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/join': typeof JoinRoute
   '/leaderboard': typeof LeaderboardRoute
   '/market': typeof MarketRoute
+  '/restaurants': typeof RestaurantsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,12 +79,27 @@ export interface FileRoutesById {
   '/join': typeof JoinRoute
   '/leaderboard': typeof LeaderboardRoute
   '/market': typeof MarketRoute
+  '/restaurants': typeof RestaurantsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/add-steps' | '/auth' | '/join' | '/leaderboard' | '/market'
+  fullPaths:
+    | '/'
+    | '/add-steps'
+    | '/auth'
+    | '/join'
+    | '/leaderboard'
+    | '/market'
+    | '/restaurants'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/add-steps' | '/auth' | '/join' | '/leaderboard' | '/market'
+  to:
+    | '/'
+    | '/add-steps'
+    | '/auth'
+    | '/join'
+    | '/leaderboard'
+    | '/market'
+    | '/restaurants'
   id:
     | '__root__'
     | '/'
@@ -85,6 +108,7 @@ export interface FileRouteTypes {
     | '/join'
     | '/leaderboard'
     | '/market'
+    | '/restaurants'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,10 +118,18 @@ export interface RootRouteChildren {
   JoinRoute: typeof JoinRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MarketRoute: typeof MarketRoute
+  RestaurantsRoute: typeof RestaurantsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/restaurants': {
+      id: '/restaurants'
+      path: '/restaurants'
+      fullPath: '/restaurants'
+      preLoaderRoute: typeof RestaurantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/market': {
       id: '/market'
       path: '/market'
@@ -150,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   JoinRoute: JoinRoute,
   LeaderboardRoute: LeaderboardRoute,
   MarketRoute: MarketRoute,
+  RestaurantsRoute: RestaurantsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
