@@ -39,28 +39,62 @@ function AuthPage() {
     if (user) navigate({ to: "/", replace: true });
   }, [user, navigate]);
 
+  function friendly(message: string) {
+    const m = message.toLowerCase();
+    if (m.includes("already registered") || m.includes("already been registered"))
+      return "That email already has an account — try signing in instead.";
+    if (m.includes("invalid login")) return "Wrong email or password. Check both and try again.";
+    if (m.includes("pwned") || m.includes("weak"))
+      return "That password has shown up in a data breach. Pick a stronger one.";
+    if (m.includes("at least")) return "Password must be at least 8 characters.";
+    if (m.includes("not confirmed")) return "Confirm your email address, then sign in.";
+    if (m.includes("rate limit") || m.includes("too many"))
+      return "Too many attempts. Wait a minute and try again.";
+    return message;
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    const cleanEmail = email.trim().toLowerCase();
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters.");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
+        const { data, error } = await supabase.auth.signUp({
+          email: cleanEmail,
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { full_name: fullName || email.split("@")[0] },
+            data: { full_name: fullName.trim() || cleanEmail.split("@")[0] },
           },
         });
         if (error) throw error;
+        if (!data.session) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: cleanEmail,
+            password,
+          });
+          if (signInError) {
+            toast.success("Account created. Check your email to confirm, then sign in.");
+            setMode("signin");
+            return;
+          }
+        }
         toast.success("Account created. Welcome to the challenge!");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        navigate({ to: "/join", replace: true });
+        return;
       }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password,
+      });
+      if (error) throw error;
       navigate({ to: "/", replace: true });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      toast.error(friendly(err instanceof Error ? err.message : "Something went wrong"));
     } finally {
       setBusy(false);
     }
@@ -124,6 +158,7 @@ function AuthPage() {
             <input
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
@@ -138,12 +173,18 @@ function AuthPage() {
             <input
               type="password"
               required
-              minLength={6}
+              minLength={8}
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
               placeholder="••••••••"
             />
+            {mode === "signup" ? (
+              <span className="mt-1 block text-xs text-muted-foreground">
+                At least 8 characters. Avoid common passwords.
+              </span>
+            ) : null}
           </label>
 
           <button
