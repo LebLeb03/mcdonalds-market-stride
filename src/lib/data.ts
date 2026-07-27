@@ -27,7 +27,8 @@ export type Store = {
   city: string | null;
   province: string | null;
   store_image_url: string | null;
-  invitation_code: string;
+  /** Only retrievable by managers through the get_store_invitation_code RPC. */
+  invitation_code?: string | null;
   is_active: boolean;
 };
 
@@ -416,7 +417,13 @@ export function useMarketData(marketId?: string | null) {
     queryFn: async (): Promise<MarketData> => {
       const [marketRes, storesRes, profilesRes, challengesRes, annRes] = await Promise.all([
         supabase.from("markets").select("*").eq("id", marketId!).single(),
-        supabase.from("stores").select("*").eq("market_id", marketId!).order("store_number"),
+        supabase
+          .from("stores")
+          .select(
+            "id, market_id, store_name, store_number, city, province, store_image_url, is_active",
+          )
+          .eq("market_id", marketId!)
+          .order("store_number"),
         supabase.from("profiles").select("*").eq("market_id", marketId!),
         supabase
           .from("challenges")
