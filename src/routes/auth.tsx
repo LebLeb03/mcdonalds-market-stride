@@ -34,6 +34,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) navigate({ to: "/", replace: true });
@@ -56,7 +57,9 @@ function AuthPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const cleanEmail = email.trim().toLowerCase();
+    setFormError(null);
     if (password.length < 8) {
+      setFormError("Password must be at least 8 characters.");
       toast.error("Password must be at least 8 characters.");
       return;
     }
@@ -94,7 +97,9 @@ function AuthPage() {
       if (error) throw error;
       navigate({ to: "/", replace: true });
     } catch (err) {
-      toast.error(friendly(err instanceof Error ? err.message : "Something went wrong"));
+      const msg = friendly(err instanceof Error ? err.message : "Something went wrong");
+      setFormError(msg);
+      toast.error(msg);
     } finally {
       setBusy(false);
     }
@@ -127,7 +132,10 @@ function AuthPage() {
               <button
                 key={m}
                 type="button"
-                onClick={() => setMode(m)}
+                onClick={() => {
+                  setMode(m);
+                  setFormError(null);
+                }}
                 className={`flex-1 rounded-full px-3 py-2 text-sm font-bold transition-colors ${
                   mode === m ? "bg-primary text-primary-foreground" : "text-muted-foreground"
                 }`}
@@ -186,6 +194,15 @@ function AuthPage() {
               </span>
             ) : null}
           </label>
+
+          {formError ? (
+            <p
+              role="alert"
+              className="rounded-xl bg-destructive/10 px-3 py-2 text-sm font-semibold text-destructive"
+            >
+              {formError}
+            </p>
+          ) : null}
 
           <button
             type="submit"
