@@ -47,28 +47,17 @@ function JoinPage() {
     if (!user) return;
     setBusy(true);
     try {
-      const { data: store, error } = await supabase
-        .from("stores")
-        .select("id, market_id, store_name")
-        .eq("invitation_code", code.trim().toUpperCase())
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("join_store_with_code", {
+        _code: code.trim().toUpperCase(),
+        _full_name: name || null,
+        _job_title: jobTitle || null,
+      });
       if (error) throw error;
+      const store = Array.isArray(data) ? data[0] : null;
       if (!store) {
         toast.error("We couldn't find a restaurant with that code.");
         return;
       }
-      const { error: upErr } = await supabase
-        .from("profiles")
-        .update({
-          store_id: store.id,
-          market_id: store.market_id,
-          full_name: name || "New Member",
-          role,
-          job_title: jobTitle,
-          participates_in_challenges: true,
-        })
-        .eq("user_id", user.id);
-      if (upErr) throw upErr;
       await qc.invalidateQueries();
       toast.success(`Welcome to ${store.store_name}!`);
       navigate({ to: "/", replace: true });
