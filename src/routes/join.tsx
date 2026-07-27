@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { QrCode, Store as StoreIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useProfile, ROLE_LABEL, type Role } from "@/lib/data";
+import { useProfile } from "@/lib/data";
 import { Card } from "@/components/kit";
 
 export const Route = createFileRoute("/join")({
@@ -22,7 +22,6 @@ export const Route = createFileRoute("/join")({
   component: JoinPage,
 });
 
-const ROLES: Role[] = ["crew", "manager", "general_manager", "market_admin"];
 
 function JoinPage() {
   const navigate = useNavigate();
@@ -30,7 +29,6 @@ function JoinPage() {
   const { data: profile, user, sessionLoading } = useProfile();
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
-  const [role, setRole] = useState<Role>("crew");
   const [jobTitle, setJobTitle] = useState("Crew Member");
   const [busy, setBusy] = useState(false);
 
