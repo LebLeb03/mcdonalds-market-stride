@@ -111,8 +111,8 @@ function RestaurantDashboard() {
           </div>
           <div className="min-w-0">
             <p className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" /> {stats.store.city} · Store code{" "}
-              {stats.store.invitation_code}
+              <MapPin className="h-3 w-3" /> {stats.store.city} · Store #
+              {stats.store.store_number}
             </p>
             <div className="mt-1 flex items-center gap-2">
               <span className="text-2xl font-black tabular-nums">#{stats.rank}</span>

@@ -42,6 +42,18 @@ function ManagerPage() {
   const [tab, setTab] = useState<"pending" | "team" | "reviewed">("pending");
   const [note, setNote] = useState<Record<string, string>>({});
 
+  const inviteCodeQuery = useQuery({
+    queryKey: ["store-invite-code", profile?.store_id],
+    enabled: !!profile?.store_id,
+    queryFn: async (): Promise<string | null> => {
+      const { data, error } = await supabase.rpc("get_store_invitation_code", {
+        _store_id: profile!.store_id!,
+      });
+      if (error) throw error;
+      return data ?? null;
+    },
+  });
+
   useEffect(() => {
     if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
   }, [sessionLoading, user, navigate]);
@@ -187,12 +199,12 @@ function ManagerPage() {
             value={`${Math.round(myStore?.participation ?? market.totals.participation)}%`}
           />
         </div>
-        {myStore ? (
+        {myStore && inviteCodeQuery.data ? (
           <button
-            onClick={() => navigator.clipboard?.writeText(myStore.store.invitation_code)}
+            onClick={() => navigator.clipboard?.writeText(inviteCodeQuery.data!)}
             className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-muted px-3 py-2.5 text-sm font-black"
           >
-            <Copy className="h-4 w-4" /> Join code {myStore.store.invitation_code}
+            <Copy className="h-4 w-4" /> Join code {inviteCodeQuery.data}
           </button>
         ) : null}
       </Card>

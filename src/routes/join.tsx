@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { QrCode, Store as StoreIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useProfile, ROLE_LABEL, type Role } from "@/lib/data";
+import { useProfile } from "@/lib/data";
 import { Card } from "@/components/kit";
 
 export const Route = createFileRoute("/join")({
@@ -22,7 +22,6 @@ export const Route = createFileRoute("/join")({
   component: JoinPage,
 });
 
-const ROLES: Role[] = ["crew", "manager", "general_manager", "market_admin"];
 
 function JoinPage() {
   const navigate = useNavigate();
@@ -30,7 +29,6 @@ function JoinPage() {
   const { data: profile, user, sessionLoading } = useProfile();
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
-  const [role, setRole] = useState<Role>("crew");
   const [jobTitle, setJobTitle] = useState("Crew Member");
   const [busy, setBusy] = useState(false);
 
@@ -47,28 +45,17 @@ function JoinPage() {
     if (!user) return;
     setBusy(true);
     try {
-      const { data: store, error } = await supabase
-        .from("stores")
-        .select("id, market_id, store_name")
-        .eq("invitation_code", code.trim().toUpperCase())
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("join_store_with_code", {
+        _code: code.trim().toUpperCase(),
+        _full_name: name || undefined,
+        _job_title: jobTitle || undefined,
+      });
       if (error) throw error;
+      const store = Array.isArray(data) ? data[0] : null;
       if (!store) {
         toast.error("We couldn't find a restaurant with that code.");
         return;
       }
-      const { error: upErr } = await supabase
-        .from("profiles")
-        .update({
-          store_id: store.id,
-          market_id: store.market_id,
-          full_name: name || "New Member",
-          role,
-          job_title: jobTitle,
-          participates_in_challenges: true,
-        })
-        .eq("user_id", user.id);
-      if (upErr) throw upErr;
       await qc.invalidateQueries();
       toast.success(`Welcome to ${store.store_name}!`);
       navigate({ to: "/", replace: true });
@@ -119,34 +106,19 @@ function JoinPage() {
               />
             </label>
 
-            <div className="grid grid-cols-2 gap-3">
-              <label className="block">
-                <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                  Role
-                </span>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as Role)}
-                  className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
-                >
-                  {ROLES.map((r) => (
-                    <option key={r} value={r}>
-                      {ROLE_LABEL[r]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="block">
-                <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                  Position
-                </span>
-                <input
-                  value={jobTitle}
-                  onChange={(e) => setJobTitle(e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
-                />
-              </label>
-            </div>
+            <label className="block">
+              <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                Position
+              </span>
+              <input
+                value={jobTitle}
+                onChange={(e) => setJobTitle(e.target.value)}
+                className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <span className="mt-1 block text-xs text-muted-foreground">
+                You join as crew. Manager access is granted by your market administrator.
+              </span>
+            </label>
 
             <p className="rounded-xl bg-muted p-3 text-xs text-muted-foreground">
               Managers compete too — your steps always count toward your personal total, your
