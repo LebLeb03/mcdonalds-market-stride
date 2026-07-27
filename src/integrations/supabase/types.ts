@@ -711,6 +711,10 @@ export type Database = {
       can_manage_store: { Args: { _store_id: string }; Returns: boolean }
       current_market_id: { Args: never; Returns: string }
       current_store_id: { Args: never; Returns: string }
+      get_store_invitation_code: {
+        Args: { _store_id: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -719,6 +723,13 @@ export type Database = {
         Returns: boolean
       }
       is_manager: { Args: never; Returns: boolean }
+      join_store_with_code: {
+        Args: { _code: string; _full_name?: string; _job_title?: string }
+        Returns: {
+          store_id: string
+          store_name: string
+        }[]
+      }
     }
     Enums: {
       app_role: "crew" | "manager" | "general_manager" | "market_admin"
