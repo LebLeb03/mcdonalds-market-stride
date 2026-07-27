@@ -50,6 +50,15 @@ export function AppShell({
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
+            {profile?.role === "market_admin" ? (
+              <Link
+                to="/admin"
+                className="grid h-10 w-10 place-items-center rounded-2xl bg-card text-primary shadow-sm"
+                aria-label="Market admin console"
+              >
+                <Settings className="h-5 w-5" />
+              </Link>
+            ) : null}
             {manager ? (
               <Link
                 to="/manager"
