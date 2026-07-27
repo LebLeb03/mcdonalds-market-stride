@@ -7,6 +7,7 @@ import {
   Store as StoreIcon,
   User as UserIcon,
   ShieldCheck,
+  Settings,
 } from "lucide-react";
 import { isManagerRole, useProfile } from "@/lib/data";
 import wordmark from "@/assets/mcd-wordmark.png.asset.json";
