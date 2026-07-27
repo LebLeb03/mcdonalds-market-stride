@@ -49,8 +49,8 @@ function JoinPage() {
     try {
       const { data, error } = await supabase.rpc("join_store_with_code", {
         _code: code.trim().toUpperCase(),
-        _full_name: name || null,
-        _job_title: jobTitle || null,
+        _full_name: name || undefined,
+        _job_title: jobTitle || undefined,
       });
       if (error) throw error;
       const store = Array.isArray(data) ? data[0] : null;
@@ -108,34 +108,19 @@ function JoinPage() {
               />
             </label>
 
-            <div className="grid grid-cols-2 gap-3">
-              <label className="block">
-                <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                  Role
-                </span>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as Role)}
-                  className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
-                >
-                  {ROLES.map((r) => (
-                    <option key={r} value={r}>
-                      {ROLE_LABEL[r]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="block">
-                <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                  Position
-                </span>
-                <input
-                  value={jobTitle}
-                  onChange={(e) => setJobTitle(e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
-                />
-              </label>
-            </div>
+            <label className="block">
+              <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                Position
+              </span>
+              <input
+                value={jobTitle}
+                onChange={(e) => setJobTitle(e.target.value)}
+                className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <span className="mt-1 block text-xs text-muted-foreground">
+                You join as crew. Manager access is granted by your market administrator.
+              </span>
+            </label>
 
             <p className="rounded-xl bg-muted p-3 text-xs text-muted-foreground">
               Managers compete too — your steps always count toward your personal total, your
