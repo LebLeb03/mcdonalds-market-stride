@@ -708,6 +708,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_set_member_access: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _store_id?: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
       can_manage_store: { Args: { _store_id: string }; Returns: boolean }
       current_market_id: { Args: never; Returns: string }
       current_store_id: { Args: never; Returns: string }
