@@ -64,7 +64,7 @@ function AdminPage() {
       const { error } = await supabase.rpc("admin_set_member_access", {
         _user_id: input.userId,
         _role: input.role,
-        _store_id: input.storeId,
+        _store_id: input.storeId ?? undefined,
       });
       if (error) throw error;
     },
