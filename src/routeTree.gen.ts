@@ -17,6 +17,7 @@ import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as JoinRouteImport } from './routes/join'
 import { Route as ChallengesRouteImport } from './routes/challenges'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AddStepsRouteImport } from './routes/add-steps'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
@@ -63,6 +64,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AddStepsRoute = AddStepsRouteImport.update({
   id: '/add-steps',
   path: '/add-steps',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRoute
   '/add-steps': typeof AddStepsRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/challenges': typeof ChallengesRoute
   '/join': typeof JoinRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRoute
   '/add-steps': typeof AddStepsRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/challenges': typeof ChallengesRoute
   '/join': typeof JoinRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRoute
   '/add-steps': typeof AddStepsRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/challenges': typeof ChallengesRoute
   '/join': typeof JoinRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/achievements'
     | '/add-steps'
+    | '/admin'
     | '/auth'
     | '/challenges'
     | '/join'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/achievements'
     | '/add-steps'
+    | '/admin'
     | '/auth'
     | '/challenges'
     | '/join'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/achievements'
     | '/add-steps'
+    | '/admin'
     | '/auth'
     | '/challenges'
     | '/join'
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AchievementsRoute: typeof AchievementsRoute
   AddStepsRoute: typeof AddStepsRoute
+  AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   ChallengesRoute: typeof ChallengesRoute
   JoinRoute: typeof JoinRoute
@@ -257,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/add-steps': {
       id: '/add-steps'
       path: '/add-steps'
@@ -299,6 +319,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AchievementsRoute: AchievementsRoute,
   AddStepsRoute: AddStepsRoute,
+  AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   ChallengesRoute: ChallengesRoute,
   JoinRoute: JoinRoute,
