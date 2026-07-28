@@ -182,8 +182,6 @@ export function useAppGuard() {
   return query;
 }
 
-
-
 /** Paged fetch to get past PostgREST row caps */
 async function fetchAll<T>(
   build: (from: number, to: number) => PromiseLike<{ data: unknown; error: unknown }>,

@@ -36,14 +36,16 @@ function AchievementsPage() {
   const navigate = useNavigate();
   const { user, sessionLoading } = useAppGuard();
 
-
   const { data, isLoading } = useQuery({
     queryKey: ["achievements", user?.id],
     enabled: !!user,
     queryFn: async () => {
       const [all, mine] = await Promise.all([
         supabase.from("achievements").select("*").order("achievement_level"),
-        supabase.from("user_achievements").select("achievement_id, earned_at").eq("user_id", user!.id),
+        supabase
+          .from("user_achievements")
+          .select("achievement_id, earned_at")
+          .eq("user_id", user!.id),
       ]);
       if (all.error) throw all.error;
       const earned = new Map<string, string>(

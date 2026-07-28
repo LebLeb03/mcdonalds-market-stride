@@ -22,7 +22,6 @@ export const Route = createFileRoute("/join")({
   component: JoinPage,
 });
 
-
 function JoinPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();

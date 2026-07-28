@@ -38,7 +38,6 @@ function AddStepsPage() {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<{ steps: number; pending: boolean } | null>(null);
 
-
   useEffect(() => {
     if (!challengeId && market?.challenges[0]) setChallengeId(market.challenges[0].id);
   }, [market, challengeId]);

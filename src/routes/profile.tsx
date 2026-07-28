@@ -17,7 +17,10 @@ export const Route = createFileRoute("/profile")({
           "Manage your daily step goal, challenge participation and restaurant details, and review your personal totals.",
       },
       { property: "og:title", content: "Your profile — McSteps" },
-      { property: "og:description", content: "Set your daily goal and manage your challenge participation." },
+      {
+        property: "og:description",
+        content: "Set your daily goal and manage your challenge participation.",
+      },
     ],
   }),
   component: ProfilePage,
@@ -30,7 +33,6 @@ function ProfilePage() {
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [goal, setGoal] = useState<string>("");
   const [saved, setSaved] = useState(false);
-
 
   useEffect(() => {
     if (profile?.daily_goal) setGoal(String(profile.daily_goal));

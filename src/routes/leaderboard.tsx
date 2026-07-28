@@ -35,7 +35,6 @@ function LeaderboardPage() {
   const [period, setPeriod] = useState<Period>("challenge");
   const [scope, setScope] = useState<"market" | "store">("market");
 
-
   if (isLoading || !market) {
     return (
       <AppShell title="Leaderboards">

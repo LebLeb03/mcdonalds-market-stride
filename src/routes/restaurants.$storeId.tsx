@@ -45,7 +45,6 @@ function RestaurantDashboard() {
   const [group, setGroup] = useState<Group>("everyone");
   const [period, setPeriod] = useState<Period>("challenge");
 
-
   if (isLoading || !market) {
     return (
       <AppShell title="Restaurant">
@@ -108,8 +107,7 @@ function RestaurantDashboard() {
           </div>
           <div className="min-w-0">
             <p className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" /> {stats.store.city} · Store #
-              {stats.store.store_number}
+              <MapPin className="h-3 w-3" /> {stats.store.city} · Store #{stats.store.store_number}
             </p>
             <div className="mt-1 flex items-center gap-2">
               <span className="text-2xl font-black tabular-nums">#{stats.rank}</span>
@@ -121,7 +119,11 @@ function RestaurantDashboard() {
 
         <div className="mt-3 grid grid-cols-2 gap-2">
           <Stat label="Total team steps" value={stats.total} tone="primary" />
-          <Stat label="Avg / active participant" value={Math.round(stats.avgPerActive)} tone="accent" />
+          <Stat
+            label="Avg / active participant"
+            value={Math.round(stats.avgPerActive)}
+            tone="accent"
+          />
           <Stat label="Active participants" value={`${stats.active}/${stats.eligible}`} />
           <Stat label="Participation" value={`${Math.round(stats.participation)}%`} />
           <Stat label="Average daily steps" value={Math.round(stats.avgDaily)} />

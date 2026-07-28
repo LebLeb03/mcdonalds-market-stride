@@ -39,7 +39,6 @@ function AdminPage() {
   const [tab, setTab] = useState<"people" | "codes">("people");
   const [search, setSearch] = useState("");
 
-
   const isAdmin = profile?.role === "market_admin";
 
   const codeQueries = useQueries({
@@ -79,8 +78,7 @@ function AdminPage() {
     const filtered = q
       ? list.filter(
           (p) =>
-            p.full_name.toLowerCase().includes(q) ||
-            (p.job_title ?? "").toLowerCase().includes(q),
+            p.full_name.toLowerCase().includes(q) || (p.job_title ?? "").toLowerCase().includes(q),
         )
       : list;
     return [...filtered].sort((a, b) => a.full_name.localeCompare(b.full_name)).slice(0, 200);

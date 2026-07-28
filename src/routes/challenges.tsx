@@ -46,7 +46,6 @@ function ChallengesPage() {
   const [tab, setTab] = useState<"active" | "upcoming" | "completed">("active");
   const [openId, setOpenId] = useState<string | null>(null);
 
-
   if (isLoading || !market) {
     return (
       <AppShell title="Challenges">
@@ -89,9 +88,7 @@ function ChallengesPage() {
         const standings = [...market.storeStats]
           .sort((a, b) => scoreForMethod(b, c.scoring_method) - scoreForMethod(a, c.scoring_method))
           .slice(0, 5);
-        const personalProgress = me
-          ? Math.min(1, me.total / Math.max(1, c.personal_step_goal))
-          : 0;
+        const personalProgress = me ? Math.min(1, me.total / Math.max(1, c.personal_step_goal)) : 0;
 
         return (
           <Card key={c.id}>

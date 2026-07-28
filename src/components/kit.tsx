@@ -1,15 +1,17 @@
 import type { ReactNode } from "react";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
 import { fmt } from "@/lib/data";
 
-export function Card({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <section className={`surface-card p-4 sm:p-5 ${className}`}>{children}</section>;
 }
 
@@ -67,7 +69,13 @@ export function ProgressRing({
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} strokeWidth={12} className="fill-none stroke-muted" />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          strokeWidth={12}
+          className="fill-none stroke-muted"
+        />
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -88,7 +96,13 @@ export function ProgressRing({
   );
 }
 
-export function ProgressBar({ progress, className = "" }: { progress: number; className?: string }) {
+export function ProgressBar({
+  progress,
+  className = "",
+}: {
+  progress: number;
+  className?: string;
+}) {
   const p = Math.max(0, Math.min(1, progress));
   return (
     <div className={`h-2.5 w-full overflow-hidden rounded-full bg-muted ${className}`}>
@@ -118,7 +132,15 @@ export function RankMove({ change }: { change: number }) {
   );
 }
 
-export function Avatar({ name, url, size = 40 }: { name: string; url?: string | null; size?: number }) {
+export function Avatar({
+  name,
+  url,
+  size = 40,
+}: {
+  name: string;
+  url?: string | null;
+  size?: number;
+}) {
   const initials = name
     .split(" ")
     .map((w) => w[0])

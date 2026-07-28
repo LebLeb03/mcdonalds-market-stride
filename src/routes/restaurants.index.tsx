@@ -27,7 +27,6 @@ function RestaurantsPage() {
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [sort, setSort] = useState<"rank" | "name" | "participation">("rank");
 
-
   if (isLoading || !market) {
     return (
       <AppShell title="Restaurants">

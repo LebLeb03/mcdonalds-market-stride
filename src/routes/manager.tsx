@@ -54,7 +54,6 @@ function ManagerPage() {
     },
   });
 
-
   const isMarketAdmin = profile?.role === "market_admin";
   const scopeStoreIds = useMemo(() => {
     if (!market) return [] as string[];
@@ -117,9 +116,7 @@ function ManagerPage() {
   }
 
   const entries = entriesQuery.data ?? [];
-  const pending = entries.filter(
-    (e) => e.approval_status === "pending" && e.user_id !== user?.id,
-  );
+  const pending = entries.filter((e) => e.approval_status === "pending" && e.user_id !== user?.id);
   const ownPending = entries.filter(
     (e) => e.approval_status === "pending" && e.user_id === user?.id,
   );

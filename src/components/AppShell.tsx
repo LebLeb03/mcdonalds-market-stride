@@ -12,7 +12,6 @@ import {
 import { isManagerRole, useProfile } from "@/lib/data";
 import wordmark from "@/assets/mcd-wordmark.png.asset.json";
 
-
 const NAV = [
   { to: "/", label: "Home", icon: Home },
   { to: "/challenges", label: "Challenges", icon: Trophy },
@@ -47,7 +46,9 @@ export function AppShell({
               loading="eager"
             />
             <h1 className="mt-2 truncate text-2xl sm:text-3xl">{title}</h1>
-            {subtitle ? <p className="mt-1 text-sm text-primary-foreground/80">{subtitle}</p> : null}
+            {subtitle ? (
+              <p className="mt-1 text-sm text-primary-foreground/80">{subtitle}</p>
+            ) : null}
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
