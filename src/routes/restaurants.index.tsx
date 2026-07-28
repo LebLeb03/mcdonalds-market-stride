@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { MapPin, ImagePlus } from "lucide-react";
-import { fmt, useMarketData, useProfile } from "@/lib/data";
+import { fmt, useMarketData, useAppGuard } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import { Card, Loading, Pills, ProgressBar, RankMove, SectionTitle } from "@/components/kit";
 
@@ -23,13 +23,9 @@ export const Route = createFileRoute("/restaurants/")({
 
 function RestaurantsPage() {
   const navigate = useNavigate();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [sort, setSort] = useState<"rank" | "name" | "participation">("rank");
-
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   if (isLoading || !market) {
     return (

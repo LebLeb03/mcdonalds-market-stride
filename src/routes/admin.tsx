@@ -4,7 +4,7 @@ import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Copy, KeyRound, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { ROLE_LABEL, useMarketData, useProfile, type Role } from "@/lib/data";
+import { ROLE_LABEL, useMarketData, useAppGuard, type Role } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import { Avatar, Card, EmptyState, Loading, Pills, SectionTitle } from "@/components/kit";
 
@@ -34,14 +34,10 @@ const ROLES: Role[] = ["crew", "manager", "general_manager", "market_admin"];
 function AdminPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [tab, setTab] = useState<"people" | "codes">("people");
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   const isAdmin = profile?.role === "market_admin";
 
@@ -82,8 +78,7 @@ function AdminPage() {
     const filtered = q
       ? list.filter(
           (p) =>
-            p.full_name.toLowerCase().includes(q) ||
-            (p.job_title ?? "").toLowerCase().includes(q),
+            p.full_name.toLowerCase().includes(q) || (p.job_title ?? "").toLowerCase().includes(q),
         )
       : list;
     return [...filtered].sort((a, b) => a.full_name.localeCompare(b.full_name)).slice(0, 200);

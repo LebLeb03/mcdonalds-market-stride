@@ -7,7 +7,7 @@ import {
   fmt,
   scoreForMethod,
   useMarketData,
-  useProfile,
+  useAppGuard,
   type Challenge,
 } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
@@ -41,14 +41,10 @@ function daysLeft(c: Challenge) {
 
 function ChallengesPage() {
   const navigate = useNavigate();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [tab, setTab] = useState<"active" | "upcoming" | "completed">("active");
   const [openId, setOpenId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   if (isLoading || !market) {
     return (
@@ -92,9 +88,7 @@ function ChallengesPage() {
         const standings = [...market.storeStats]
           .sort((a, b) => scoreForMethod(b, c.scoring_method) - scoreForMethod(a, c.scoring_method))
           .slice(0, 5);
-        const personalProgress = me
-          ? Math.min(1, me.total / Math.max(1, c.personal_step_goal))
-          : 0;
+        const personalProgress = me ? Math.min(1, me.total / Math.max(1, c.personal_step_goal)) : 0;
 
         return (
           <Card key={c.id}>

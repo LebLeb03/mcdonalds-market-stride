@@ -6,7 +6,6 @@ import { useSession } from "@/lib/data";
 import mark from "@/assets/mcd-mark.png.asset.json";
 import wordmark from "@/assets/mcd-wordmark.png.asset.json";
 
-
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -114,11 +113,7 @@ function AuthPage() {
             alt="McDonald's arches"
             className="mx-auto h-20 w-20 rounded-3xl shadow-lg"
           />
-          <img
-            src={wordmark.url}
-            alt="McDonald's"
-            className="mx-auto mt-4 h-8 w-auto"
-          />
+          <img src={wordmark.url} alt="McDonald's" className="mx-auto mt-4 h-8 w-auto" />
           <h1 className="mt-3 text-3xl">Market Step Challenge</h1>
 
           <p className="mt-2 text-sm text-primary-foreground/85">

@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LogOut, Award, Store as StoreIcon, Target, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { fmt, ROLE_LABEL, useMarketData, useProfile } from "@/lib/data";
+import { fmt, ROLE_LABEL, useMarketData, useAppGuard } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import { Avatar, Card, Loading, SectionTitle, Stat } from "@/components/kit";
 
@@ -17,7 +17,10 @@ export const Route = createFileRoute("/profile")({
           "Manage your daily step goal, challenge participation and restaurant details, and review your personal totals.",
       },
       { property: "og:title", content: "Your profile — McSteps" },
-      { property: "og:description", content: "Set your daily goal and manage your challenge participation." },
+      {
+        property: "og:description",
+        content: "Set your daily goal and manage your challenge participation.",
+      },
     ],
   }),
   component: ProfilePage,
@@ -26,14 +29,10 @@ export const Route = createFileRoute("/profile")({
 function ProfilePage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [goal, setGoal] = useState<string>("");
   const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   useEffect(() => {
     if (profile?.daily_goal) setGoal(String(profile.daily_goal));

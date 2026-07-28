@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CheckCircle2, Smartphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useMarketData, useProfile, todayISO, fmt } from "@/lib/data";
+import { useMarketData, useAppGuard, todayISO, fmt } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import { Card, SectionTitle } from "@/components/kit";
 
@@ -28,7 +28,7 @@ const REVIEW_THRESHOLD = 60000;
 function AddStepsPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market } = useMarketData(profile?.market_id);
   const [date, setDate] = useState(todayISO());
   const [steps, setSteps] = useState("");
@@ -37,10 +37,6 @@ function AddStepsPage() {
   const [challengeId, setChallengeId] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<{ steps: number; pending: boolean } | null>(null);
-
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   useEffect(() => {
     if (!challengeId && market?.challenges[0]) setChallengeId(market.challenges[0].id);

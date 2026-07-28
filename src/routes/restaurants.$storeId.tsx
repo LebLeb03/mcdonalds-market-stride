@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { ImagePlus, MapPin, Users, Flame, Megaphone, Trophy } from "lucide-react";
-import { fmt, isManagerRole, ROLE_LABEL, useMarketData, useProfile } from "@/lib/data";
+import { fmt, isManagerRole, ROLE_LABEL, useMarketData, useAppGuard } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import {
   Avatar,
@@ -40,14 +40,10 @@ type Period = "today" | "week" | "challenge";
 function RestaurantDashboard() {
   const { storeId } = Route.useParams();
   const navigate = useNavigate();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [group, setGroup] = useState<Group>("everyone");
   const [period, setPeriod] = useState<Period>("challenge");
-
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   if (isLoading || !market) {
     return (
@@ -111,8 +107,7 @@ function RestaurantDashboard() {
           </div>
           <div className="min-w-0">
             <p className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" /> {stats.store.city} · Store #
-              {stats.store.store_number}
+              <MapPin className="h-3 w-3" /> {stats.store.city} · Store #{stats.store.store_number}
             </p>
             <div className="mt-1 flex items-center gap-2">
               <span className="text-2xl font-black tabular-nums">#{stats.rank}</span>
@@ -124,7 +119,11 @@ function RestaurantDashboard() {
 
         <div className="mt-3 grid grid-cols-2 gap-2">
           <Stat label="Total team steps" value={stats.total} tone="primary" />
-          <Stat label="Avg / active participant" value={Math.round(stats.avgPerActive)} tone="accent" />
+          <Stat
+            label="Avg / active participant"
+            value={Math.round(stats.avgPerActive)}
+            tone="accent"
+          />
           <Stat label="Active participants" value={`${stats.active}/${stats.eligible}`} />
           <Stat label="Participation" value={`${Math.round(stats.participation)}%`} />
           <Stat label="Average daily steps" value={Math.round(stats.avgDaily)} />

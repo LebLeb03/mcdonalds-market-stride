@@ -6,7 +6,7 @@ import {
   SCORING_LABEL,
   scoreForMethod,
   useMarketData,
-  useProfile,
+  useAppGuard,
   type StoreStats,
 } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
@@ -51,14 +51,10 @@ const METHODS = [
 
 function MarketPage() {
   const navigate = useNavigate();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [method, setMethod] = useState<string>("avg_per_active_participant");
   const [period, setPeriod] = useState<"challenge" | "week" | "today">("challenge");
-
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   useEffect(() => {
     const official = market?.challenges[0]?.scoring_method;
@@ -77,9 +73,7 @@ function MarketPage() {
   const daysLeft = challenge
     ? Math.max(
         0,
-        Math.ceil(
-          (new Date(challenge.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-        ),
+        Math.ceil((new Date(challenge.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
       )
     : 0;
 
@@ -129,7 +123,9 @@ function MarketPage() {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Card>
-          <p className="text-[11px] font-black uppercase text-muted-foreground">Leading restaurant</p>
+          <p className="text-[11px] font-black uppercase text-muted-foreground">
+            Leading restaurant
+          </p>
           <p className="mt-1 inline-flex items-center gap-1.5 text-sm font-black">
             <Trophy className="h-4 w-4 text-accent" /> {leading?.store.store_name}
           </p>
@@ -226,7 +222,8 @@ function MarketPage() {
             <p className="mt-2 truncate text-xs text-muted-foreground">
               Top participant: {s.topMember?.profile.full_name ?? "—"} ·{" "}
               <span className="inline-flex items-center gap-1">
-                <Flag className="h-3 w-3" /> {challenge ? "Challenge active" : "No active challenge"}
+                <Flag className="h-3 w-3" />{" "}
+                {challenge ? "Challenge active" : "No active challenge"}
               </span>
             </p>
 

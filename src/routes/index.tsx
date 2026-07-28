@@ -13,14 +13,7 @@ import {
   Sparkles,
   ThumbsUp,
 } from "lucide-react";
-import {
-  fmt,
-  isManagerRole,
-  ROLE_LABEL,
-  useMarketData,
-  useProfile,
-  daysAgoISO,
-} from "@/lib/data";
+import { fmt, isManagerRole, ROLE_LABEL, useMarketData, useAppGuard, daysAgoISO } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import {
   Avatar,
@@ -55,12 +48,8 @@ export const Route = createFileRoute("/")({
 
 function PersonalDashboard() {
   const navigate = useNavigate();
-  const { data: profile, isLoading, user, sessionLoading } = useProfile();
+  const { data: profile, isLoading, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading: marketLoading } = useMarketData(profile?.market_id);
-
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   useEffect(() => {
     if (profile && !profile.store_id) navigate({ to: "/join", replace: true });
@@ -199,7 +188,10 @@ function PersonalDashboard() {
         <div className="flex flex-wrap gap-2">
           {[
             { icon: Trophy, label: "Team Contributor" },
-            { icon: Medal, label: (me?.marketRank ?? 99) <= 10 ? "Market Top Ten" : "Personal Best" },
+            {
+              icon: Medal,
+              label: (me?.marketRank ?? 99) <= 10 ? "Market Top Ten" : "Personal Best",
+            },
             { icon: Flame, label: `${me?.streak ?? 0}-day streak` },
             ...(manager ? [{ icon: Sparkles, label: "Manager on the Move" }] : []),
           ].map(({ icon: Icon, label }) => (
