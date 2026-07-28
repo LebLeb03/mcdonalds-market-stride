@@ -158,6 +158,31 @@ export function useProfile() {
   return { ...query, user, sessionLoading: loading };
 }
 
+/**
+ * Shared page guard: sends signed-out visitors to /auth and members who have
+ * not joined a restaurant yet to /join, so pages never hang on a spinner.
+ */
+export function useAppGuard() {
+  const navigate = useNavigate();
+  const query = useProfile();
+  const { user, sessionLoading, isLoading, data } = query;
+
+  useEffect(() => {
+    if (sessionLoading) return;
+    if (!user) {
+      navigate({ to: "/auth", replace: true });
+      return;
+    }
+    if (!isLoading && data && !data.market_id) {
+      navigate({ to: "/join", replace: true });
+    }
+  }, [sessionLoading, user, isLoading, data, navigate]);
+
+  return query;
+}
+
+
+
 /** Paged fetch to get past PostgREST row caps */
 async function fetchAll<T>(
   build: (from: number, to: number) => PromiseLike<{ data: unknown; error: unknown }>,
