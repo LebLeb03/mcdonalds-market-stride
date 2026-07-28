@@ -7,7 +7,7 @@ import {
   fmt,
   scoreForMethod,
   useMarketData,
-  useProfile,
+  useAppGuard,
   type Challenge,
 } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
@@ -41,14 +41,11 @@ function daysLeft(c: Challenge) {
 
 function ChallengesPage() {
   const navigate = useNavigate();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [tab, setTab] = useState<"active" | "upcoming" | "completed">("active");
   const [openId, setOpenId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   if (isLoading || !market) {
     return (

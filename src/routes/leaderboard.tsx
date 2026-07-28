@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { Crown } from "lucide-react";
-import { fmt, isManagerRole, ROLE_LABEL, useMarketData, useProfile } from "@/lib/data";
+import { fmt, isManagerRole, ROLE_LABEL, useMarketData, useAppGuard } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import { Avatar, Card, Loading, Pills, RankMove, SectionTitle } from "@/components/kit";
 
@@ -29,15 +29,12 @@ type Period = "today" | "week" | "challenge";
 
 function LeaderboardPage() {
   const navigate = useNavigate();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [group, setGroup] = useState<Group>("everyone");
   const [period, setPeriod] = useState<Period>("challenge");
   const [scope, setScope] = useState<"market" | "store">("market");
 
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   if (isLoading || !market) {
     return (

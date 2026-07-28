@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Award, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useProfile } from "@/lib/data";
+import { useAppGuard } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import { Card, Loading, SectionTitle } from "@/components/kit";
 
@@ -34,11 +34,8 @@ type Achievement = {
 
 function AchievementsPage() {
   const navigate = useNavigate();
-  const { user, sessionLoading } = useProfile();
+  const { user, sessionLoading } = useAppGuard();
 
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["achievements", user?.id],

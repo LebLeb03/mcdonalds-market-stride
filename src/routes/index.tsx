@@ -18,7 +18,7 @@ import {
   isManagerRole,
   ROLE_LABEL,
   useMarketData,
-  useProfile,
+  useAppGuard,
   daysAgoISO,
 } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
@@ -55,12 +55,9 @@ export const Route = createFileRoute("/")({
 
 function PersonalDashboard() {
   const navigate = useNavigate();
-  const { data: profile, isLoading, user, sessionLoading } = useProfile();
+  const { data: profile, isLoading, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading: marketLoading } = useMarketData(profile?.market_id);
 
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   useEffect(() => {
     if (profile && !profile.store_id) navigate({ to: "/join", replace: true });

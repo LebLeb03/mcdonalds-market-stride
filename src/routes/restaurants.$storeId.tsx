@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { ImagePlus, MapPin, Users, Flame, Megaphone, Trophy } from "lucide-react";
-import { fmt, isManagerRole, ROLE_LABEL, useMarketData, useProfile } from "@/lib/data";
+import { fmt, isManagerRole, ROLE_LABEL, useMarketData, useAppGuard } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import {
   Avatar,
@@ -40,14 +40,11 @@ type Period = "today" | "week" | "challenge";
 function RestaurantDashboard() {
   const { storeId } = Route.useParams();
   const navigate = useNavigate();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [group, setGroup] = useState<Group>("everyone");
   const [period, setPeriod] = useState<Period>("challenge");
 
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   if (isLoading || !market) {
     return (

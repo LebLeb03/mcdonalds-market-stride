@@ -8,7 +8,7 @@ import {
   isManagerRole,
   ROLE_LABEL,
   useMarketData,
-  useProfile,
+  useAppGuard,
   type Entry,
   type Profile,
 } from "@/lib/data";
@@ -37,7 +37,7 @@ export const Route = createFileRoute("/manager")({
 function ManagerPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { data: profile, user, sessionLoading } = useProfile();
+  const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [tab, setTab] = useState<"pending" | "team" | "reviewed">("pending");
   const [note, setNote] = useState<Record<string, string>>({});
@@ -54,9 +54,6 @@ function ManagerPage() {
     },
   });
 
-  useEffect(() => {
-    if (!sessionLoading && !user) navigate({ to: "/auth", replace: true });
-  }, [sessionLoading, user, navigate]);
 
   const isMarketAdmin = profile?.role === "market_admin";
   const scopeStoreIds = useMemo(() => {
