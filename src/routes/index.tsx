@@ -235,10 +235,10 @@ function PersonalDashboard() {
       {manager ? (
         <Card className="border-2 border-accent">
           <SectionTitle title="Manager Tools" />
-          <p className="mb-3 text-xs text-muted-foreground">
+          <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
             Your personal competition stats stay above — these are your store leader tools.
           </p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {[
               { to: "/manager", label: "Pending approvals", icon: ClipboardCheck },
               { to: "/manager", label: "Crew participation", icon: Users },
@@ -250,7 +250,7 @@ function PersonalDashboard() {
               <Link
                 key={label}
                 to={to}
-                className="flex items-center gap-2 rounded-2xl bg-muted p-3 text-xs font-bold"
+                className="flex items-center gap-2.5 rounded-2xl bg-muted px-4 py-3.5 text-xs font-bold"
               >
                 <Icon className="h-4 w-4 shrink-0 text-primary" />
                 <span className="min-w-0 truncate">{label}</span>
