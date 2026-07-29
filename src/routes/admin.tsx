@@ -38,6 +38,12 @@ function AdminPage() {
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [tab, setTab] = useState<"people" | "codes">("people");
   const [search, setSearch] = useState("");
+  const [newStore, setNewStore] = useState({
+    store_name: "",
+    store_number: "",
+    city: "",
+    province: "",
+  });
 
   const isAdmin = profile?.role === "market_admin";
 
