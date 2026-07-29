@@ -12,12 +12,13 @@ import {
 import { fmt } from "@/lib/data";
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`surface-card p-4 sm:p-5 ${className}`}>{children}</section>;
+  return <section className={`surface-card p-5 sm:p-6 ${className}`}>{children}</section>;
 }
 
 export function SectionTitle({ title, right }: { title: string; right?: ReactNode }) {
   return (
-    <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+    <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+
       <h2 className="truncate text-base font-black uppercase tracking-wide">{title}</h2>
       {right}
     </div>
