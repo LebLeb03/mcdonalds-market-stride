@@ -218,7 +218,7 @@ function PersonalDashboard() {
 
       <Card>
         <SectionTitle title="Encouragement from your team" />
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {encouragement.map((m) => (
             <li key={m.profile.user_id} className="flex items-center gap-3">
               <Avatar name={m.profile.full_name} url={m.profile.avatar_url} size={34} />
