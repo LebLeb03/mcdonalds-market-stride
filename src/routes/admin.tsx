@@ -78,6 +78,39 @@ function AdminPage() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not update access"),
   });
 
+  const createStore = useMutation({
+    mutationFn: async (input: typeof newStore) => {
+      const { error } = await supabase.rpc("admin_create_store", {
+        _store_name: input.store_name,
+        _store_number: input.store_number,
+        _city: input.city || undefined,
+        _province: input.province || undefined,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Restaurant created");
+      setNewStore({ store_name: "", store_number: "", city: "", province: "" });
+      qc.invalidateQueries({ queryKey: ["market-data"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not create restaurant"),
+  });
+
+  const deleteStore = useMutation({
+    mutationFn: async (storeId: string) => {
+      const { error } = await supabase.rpc("admin_delete_store", { _store_id: storeId });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Restaurant deleted");
+      qc.invalidateQueries({ queryKey: ["market-data"] });
+      qc.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not delete restaurant"),
+  });
+
+
+
   const people = useMemo(() => {
     const list = market?.profiles ?? [];
     const q = search.trim().toLowerCase();
