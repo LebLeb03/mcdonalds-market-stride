@@ -176,12 +176,12 @@ function PersonalDashboard() {
               </Link>
             }
           />
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3">
             <Stat label="Market rank" value={`#${storeStats.rank}`} tone="primary" />
             <Stat label="Team steps" value={storeStats.total} />
             <Stat label="Participation" value={`${Math.round(storeStats.participation)}%`} />
           </div>
-          <p className="mt-3 rounded-xl bg-muted p-3 text-xs text-muted-foreground">
+          <p className="mt-4 rounded-2xl bg-muted px-4 py-3 text-xs leading-relaxed text-muted-foreground">
             Everyone on the restaurant team contributes, including managers.
           </p>
         </Card>
