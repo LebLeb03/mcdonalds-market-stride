@@ -75,7 +75,7 @@ export function AppShell({
         </div>
       </header>
 
-      <main className="mx-auto -mt-4 max-w-6xl space-y-4 px-4 sm:px-8">{children}</main>
+      <main className="mx-auto -mt-4 max-w-6xl space-y-5 px-4 pb-2 sm:px-8">{children}</main>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-stretch justify-between px-2 py-1">
