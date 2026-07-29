@@ -708,6 +708,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_create_store: {
+        Args: {
+          _city?: string
+          _province?: string
+          _store_name: string
+          _store_number: string
+        }
+        Returns: {
+          id: string
+          invitation_code: string
+        }[]
+      }
+      admin_delete_store: { Args: { _store_id: string }; Returns: undefined }
       admin_set_member_access: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

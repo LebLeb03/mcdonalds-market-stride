@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Copy, KeyRound, Users } from "lucide-react";
+import { Copy, KeyRound, Plus, Trash2, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ROLE_LABEL, useMarketData, useAppGuard, type Role } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
@@ -38,6 +38,12 @@ function AdminPage() {
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [tab, setTab] = useState<"people" | "codes">("people");
   const [search, setSearch] = useState("");
+  const [newStore, setNewStore] = useState({
+    store_name: "",
+    store_number: "",
+    city: "",
+    province: "",
+  });
 
   const isAdmin = profile?.role === "market_admin";
 
@@ -71,6 +77,39 @@ function AdminPage() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not update access"),
   });
+
+  const createStore = useMutation({
+    mutationFn: async (input: typeof newStore) => {
+      const { error } = await supabase.rpc("admin_create_store", {
+        _store_name: input.store_name,
+        _store_number: input.store_number,
+        _city: input.city || undefined,
+        _province: input.province || undefined,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Restaurant created");
+      setNewStore({ store_name: "", store_number: "", city: "", province: "" });
+      qc.invalidateQueries({ queryKey: ["market-data"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not create restaurant"),
+  });
+
+  const deleteStore = useMutation({
+    mutationFn: async (storeId: string) => {
+      const { error } = await supabase.rpc("admin_delete_store", { _store_id: storeId });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Restaurant deleted");
+      qc.invalidateQueries({ queryKey: ["market-data"] });
+      qc.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not delete restaurant"),
+  });
+
+
 
   const people = useMemo(() => {
     const list = market?.profiles ?? [];
@@ -190,48 +229,124 @@ function AdminPage() {
           ) : null}
         </Card>
       ) : (
-        <Card>
-          <SectionTitle
-            title="Restaurant join codes"
-            right={<KeyRound className="h-4 w-4 opacity-60" />}
-          />
-          <p className="mb-3 text-xs text-muted-foreground">
-            Share a code with crew so they can join that restaurant. Managers are assigned here, not
-            by code.
-          </p>
-          <ul className="divide-y divide-border">
-            {market.stores.map((s, i) => {
-              const code = codeQueries[i]?.data ?? null;
-              return (
-                <li key={s.id} className="flex items-center gap-3 py-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold">{s.store_name}</p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      #{s.store_number} · {s.city ?? "—"}
-                    </p>
-                  </div>
-                  <code className="rounded-lg bg-muted px-2 py-1 text-xs font-black tracking-widest">
-                    {code ?? "…"}
-                  </code>
-                  <button
-                    type="button"
-                    aria-label={`Copy code for ${s.store_name}`}
-                    disabled={!code}
-                    onClick={() => {
-                      if (!code) return;
-                      void navigator.clipboard.writeText(code);
-                      toast.success("Code copied");
-                    }}
-                    className="grid h-9 w-9 place-items-center rounded-xl bg-secondary text-secondary-foreground disabled:opacity-50"
-                  >
-                    <Copy className="h-4 w-4" />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </Card>
+        <>
+          <Card>
+            <SectionTitle title="Add a restaurant" right={<Plus className="h-4 w-4 opacity-60" />} />
+            <form
+              className="grid grid-cols-2 gap-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!newStore.store_name.trim() || !newStore.store_number.trim()) {
+                  toast.error("Name and number are required");
+                  return;
+                }
+                createStore.mutate(newStore);
+              }}
+            >
+              <input
+                aria-label="Restaurant name"
+                placeholder="Restaurant name"
+                value={newStore.store_name}
+                onChange={(e) => setNewStore((s) => ({ ...s, store_name: e.target.value }))}
+                className="col-span-2 rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                aria-label="Restaurant number"
+                placeholder="Store #"
+                value={newStore.store_number}
+                onChange={(e) => setNewStore((s) => ({ ...s, store_number: e.target.value }))}
+                className="rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                aria-label="City"
+                placeholder="City"
+                value={newStore.city}
+                onChange={(e) => setNewStore((s) => ({ ...s, city: e.target.value }))}
+                className="rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                aria-label="Province"
+                placeholder="Province"
+                value={newStore.province}
+                onChange={(e) => setNewStore((s) => ({ ...s, province: e.target.value }))}
+                className="col-span-2 rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <button
+                type="submit"
+                disabled={createStore.isPending}
+                className="col-span-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-primary-foreground disabled:opacity-60"
+              >
+                {createStore.isPending ? "Creating…" : "Create restaurant"}
+              </button>
+            </form>
+          </Card>
+
+          <Card>
+            <SectionTitle
+              title="Restaurant join codes"
+              right={<KeyRound className="h-4 w-4 opacity-60" />}
+            />
+            <p className="mb-3 text-xs text-muted-foreground">
+              Share a code with crew so they can join that restaurant. Managers are assigned here,
+              not by code.
+            </p>
+            <ul className="divide-y divide-border">
+              {market.stores.map((s, i) => {
+                const code = codeQueries[i]?.data ?? null;
+                return (
+                  <li key={s.id} className="flex items-center gap-2 py-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold">{s.store_name}</p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        #{s.store_number} · {s.city ?? "—"}
+                      </p>
+                    </div>
+                    <code className="rounded-lg bg-muted px-2 py-1 text-xs font-black tracking-widest">
+                      {code ?? "…"}
+                    </code>
+                    <button
+                      type="button"
+                      aria-label={`Copy code for ${s.store_name}`}
+                      disabled={!code}
+                      onClick={() => {
+                        if (!code) return;
+                        void navigator.clipboard.writeText(code);
+                        toast.success("Code copied");
+                      }}
+                      className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-secondary text-secondary-foreground disabled:opacity-50"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`Delete ${s.store_name}`}
+                      disabled={deleteStore.isPending}
+                      onClick={() => {
+                        if (
+                          !window.confirm(
+                            `Delete ${s.store_name}? Team members will be unassigned from it.`,
+                          )
+                        )
+                          return;
+                        deleteStore.mutate(s.id);
+                      }}
+                      className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-destructive text-destructive-foreground disabled:opacity-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            {market.stores.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">
+                No restaurants yet — add your first one above.
+              </p>
+            ) : null}
+          </Card>
+        </>
       )}
+
     </AppShell>
   );
 }
