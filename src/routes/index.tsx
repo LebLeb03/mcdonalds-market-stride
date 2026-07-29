@@ -148,15 +148,17 @@ function PersonalDashboard() {
               </Link>
             }
           />
-          <p className="text-sm font-black">{challenge.title}</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">{challenge.description}</p>
-          <div className="mt-3 flex items-center justify-between text-xs font-semibold">
+          <p className="text-sm font-black leading-snug">{challenge.title}</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+            {challenge.description}
+          </p>
+          <div className="mt-4 flex items-center justify-between gap-3 text-xs font-semibold">
             <span>Personal goal progress</span>
             <span className="tabular-nums">
               {fmt(me?.total ?? 0)} / {fmt(personalGoal)}
             </span>
           </div>
-          <ProgressBar progress={(me?.total ?? 0) / personalGoal} className="mt-1.5" />
+          <ProgressBar progress={(me?.total ?? 0) / personalGoal} className="mt-2" />
         </Card>
       ) : null}
 
