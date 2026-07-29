@@ -12,12 +12,13 @@ import {
 import { fmt } from "@/lib/data";
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`surface-card p-4 sm:p-5 ${className}`}>{children}</section>;
+  return <section className={`surface-card p-5 sm:p-6 ${className}`}>{children}</section>;
 }
 
 export function SectionTitle({ title, right }: { title: string; right?: ReactNode }) {
   return (
-    <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+    <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+
       <h2 className="truncate text-base font-black uppercase tracking-wide">{title}</h2>
       {right}
     </div>
@@ -42,12 +43,14 @@ export function Stat({
         ? "bg-primary text-primary-foreground"
         : "bg-card text-card-foreground";
   return (
-    <div className={`surface-card p-3 ${toneClass}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-wide opacity-70">{label}</p>
-      <p className="mt-1 text-xl font-black tabular-nums sm:text-2xl">
+    <div className={`surface-card px-4 py-3.5 ${toneClass}`}>
+      <p className="text-[11px] font-semibold uppercase leading-tight tracking-wide opacity-70">
+        {label}
+      </p>
+      <p className="mt-1.5 text-xl font-black leading-none tabular-nums sm:text-2xl">
         {typeof value === "number" ? fmt(value) : value}
       </p>
-      {hint ? <p className="mt-0.5 text-[11px] opacity-70">{hint}</p> : null}
+      {hint ? <p className="mt-1.5 text-[11px] leading-tight opacity-70">{hint}</p> : null}
     </div>
   );
 }

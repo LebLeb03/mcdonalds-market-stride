@@ -91,38 +91,47 @@ function PersonalDashboard() {
       }
     >
       <Card className="animate-pop">
-        <div className="flex flex-wrap items-center justify-center gap-5 sm:justify-between">
+        <div className="flex flex-wrap items-center justify-center gap-6 sm:flex-nowrap sm:justify-between">
           <ProgressRing
             progress={(me?.today ?? 0) / (profile.daily_goal || 10000)}
             label={fmt(me?.today ?? 0)}
             sublabel={`of ${fmt(profile.daily_goal)} daily goal`}
           />
-          <div className="grid min-w-0 flex-1 grid-cols-2 gap-2">
+          <div className="grid min-w-0 flex-1 grid-cols-2 gap-3">
             <Stat label="This week" value={me?.week ?? 0} />
             <Stat label="This month" value={me?.month ?? 0} />
             <Stat label="Challenge total" value={me?.total ?? 0} tone="accent" />
             <Stat label="Daily average" value={me?.dailyAverage ?? 0} />
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          <div className="rounded-2xl bg-muted p-3 text-center">
-            <p className="text-[11px] font-bold uppercase text-muted-foreground">Market rank</p>
-            <p className="text-lg font-black">#{me?.marketRank ?? "—"}</p>
-            <RankMove change={me?.rankChange ?? 0} />
+        <div className="mt-5 grid grid-cols-3 gap-3">
+          <div className="rounded-2xl bg-muted px-3 py-3.5 text-center">
+            <p className="text-[11px] font-bold uppercase leading-tight text-muted-foreground">
+              Market rank
+            </p>
+            <p className="mt-1.5 text-lg font-black leading-none">#{me?.marketRank ?? "—"}</p>
+            <div className="mt-1.5">
+              <RankMove change={me?.rankChange ?? 0} />
+            </div>
           </div>
-          <div className="rounded-2xl bg-muted p-3 text-center">
-            <p className="text-[11px] font-bold uppercase text-muted-foreground">Store rank</p>
-            <p className="text-lg font-black">#{me?.storeRank ?? "—"}</p>
+          <div className="rounded-2xl bg-muted px-3 py-3.5 text-center">
+            <p className="text-[11px] font-bold uppercase leading-tight text-muted-foreground">
+              Store rank
+            </p>
+            <p className="mt-1.5 text-lg font-black leading-none">#{me?.storeRank ?? "—"}</p>
           </div>
-          <div className="rounded-2xl bg-muted p-3 text-center">
-            <p className="text-[11px] font-bold uppercase text-muted-foreground">Streak</p>
-            <p className="inline-flex items-center gap-1 text-lg font-black">
+          <div className="rounded-2xl bg-muted px-3 py-3.5 text-center">
+            <p className="text-[11px] font-bold uppercase leading-tight text-muted-foreground">
+              Streak
+            </p>
+            <p className="mt-1.5 inline-flex items-center gap-1 text-lg font-black leading-none">
               <Flame className="h-4 w-4 text-primary" />
               {me?.streak ?? 0}
             </p>
           </div>
         </div>
       </Card>
+
 
       <Card>
         <SectionTitle title="Last 7 days" />
@@ -139,15 +148,17 @@ function PersonalDashboard() {
               </Link>
             }
           />
-          <p className="text-sm font-black">{challenge.title}</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">{challenge.description}</p>
-          <div className="mt-3 flex items-center justify-between text-xs font-semibold">
+          <p className="text-sm font-black leading-snug">{challenge.title}</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+            {challenge.description}
+          </p>
+          <div className="mt-4 flex items-center justify-between gap-3 text-xs font-semibold">
             <span>Personal goal progress</span>
             <span className="tabular-nums">
               {fmt(me?.total ?? 0)} / {fmt(personalGoal)}
             </span>
           </div>
-          <ProgressBar progress={(me?.total ?? 0) / personalGoal} className="mt-1.5" />
+          <ProgressBar progress={(me?.total ?? 0) / personalGoal} className="mt-2" />
         </Card>
       ) : null}
 
@@ -165,12 +176,12 @@ function PersonalDashboard() {
               </Link>
             }
           />
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3">
             <Stat label="Market rank" value={`#${storeStats.rank}`} tone="primary" />
             <Stat label="Team steps" value={storeStats.total} />
             <Stat label="Participation" value={`${Math.round(storeStats.participation)}%`} />
           </div>
-          <p className="mt-3 rounded-xl bg-muted p-3 text-xs text-muted-foreground">
+          <p className="mt-4 rounded-2xl bg-muted px-4 py-3 text-xs leading-relaxed text-muted-foreground">
             Everyone on the restaurant team contributes, including managers.
           </p>
         </Card>
@@ -185,7 +196,7 @@ function PersonalDashboard() {
             </Link>
           }
         />
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2.5">
           {[
             { icon: Trophy, label: "Team Contributor" },
             {
@@ -207,7 +218,7 @@ function PersonalDashboard() {
 
       <Card>
         <SectionTitle title="Encouragement from your team" />
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {encouragement.map((m) => (
             <li key={m.profile.user_id} className="flex items-center gap-3">
               <Avatar name={m.profile.full_name} url={m.profile.avatar_url} size={34} />
@@ -224,10 +235,10 @@ function PersonalDashboard() {
       {manager ? (
         <Card className="border-2 border-accent">
           <SectionTitle title="Manager Tools" />
-          <p className="mb-3 text-xs text-muted-foreground">
+          <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
             Your personal competition stats stay above — these are your store leader tools.
           </p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {[
               { to: "/manager", label: "Pending approvals", icon: ClipboardCheck },
               { to: "/manager", label: "Crew participation", icon: Users },
@@ -239,7 +250,7 @@ function PersonalDashboard() {
               <Link
                 key={label}
                 to={to}
-                className="flex items-center gap-2 rounded-2xl bg-muted p-3 text-xs font-bold"
+                className="flex items-center gap-2.5 rounded-2xl bg-muted px-4 py-3.5 text-xs font-bold"
               >
                 <Icon className="h-4 w-4 shrink-0 text-primary" />
                 <span className="min-w-0 truncate">{label}</span>
