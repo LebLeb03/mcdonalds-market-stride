@@ -196,7 +196,7 @@ function PersonalDashboard() {
             </Link>
           }
         />
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2.5">
           {[
             { icon: Trophy, label: "Team Contributor" },
             {
