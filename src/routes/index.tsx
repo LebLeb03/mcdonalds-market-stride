@@ -176,7 +176,7 @@ function PersonalDashboard() {
               </Link>
             }
           />
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
             <Stat label="Market rank" value={`#${storeStats.rank}`} tone="primary" />
             <Stat label="Team steps" value={storeStats.total} />
             <Stat label="Participation" value={`${Math.round(storeStats.participation)}%`} />
