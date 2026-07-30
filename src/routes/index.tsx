@@ -238,7 +238,7 @@ function PersonalDashboard() {
           <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
             Your personal competition stats stay above — these are your store leader tools.
           </p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
             {[
               { to: "/manager", label: "Pending approvals", icon: ClipboardCheck },
               { to: "/manager", label: "Crew participation", icon: Users },
