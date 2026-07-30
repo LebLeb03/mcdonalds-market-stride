@@ -17,10 +17,11 @@ export function Card({ children, className = "" }: { children: ReactNode; classN
 
 export function SectionTitle({ title, right }: { title: string; right?: ReactNode }) {
   return (
-    <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-
-      <h2 className="truncate text-base font-black uppercase tracking-wide">{title}</h2>
-      {right}
+    <div className="mb-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      <h2 className="min-w-0 text-sm font-black uppercase leading-snug tracking-wide sm:text-base">
+        {title}
+      </h2>
+      {right ? <div className="shrink-0">{right}</div> : null}
     </div>
   );
 }
