@@ -37,42 +37,45 @@ export function AppShell({
   return (
     <div className="min-h-screen bg-background pb-28">
       <header className="hero-arches px-4 pb-20 pt-6 text-primary-foreground sm:px-8 sm:pb-20">
-        <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:gap-4">
-          <div className="min-w-0">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex items-center justify-between gap-3">
             <img
               src={wordmark.url}
               alt="McDonald's"
-              className="h-6 w-auto sm:h-8"
+              className="h-6 w-auto shrink-0 sm:h-8"
               loading="eager"
             />
-            <h1 className="mt-3 truncate text-xl leading-tight sm:text-3xl">{title}</h1>
+
+            <div className="flex shrink-0 items-center gap-2">
+              {profile?.role === "market_admin" ? (
+                <Link
+                  to="/admin"
+                  className="grid h-9 w-9 place-items-center rounded-2xl bg-card text-primary shadow-sm sm:h-10 sm:w-10"
+                  aria-label="Market admin console"
+                >
+                  <Settings className="h-4.5 w-4.5" />
+                </Link>
+              ) : null}
+              {manager ? (
+                <Link
+                  to="/manager"
+                  className="grid h-9 w-9 place-items-center rounded-2xl bg-accent text-accent-foreground shadow-sm sm:h-10 sm:w-10"
+                  aria-label="Manager tools"
+                >
+                  <ShieldCheck className="h-4.5 w-4.5" />
+                </Link>
+              ) : null}
+              {action}
+            </div>
+          </div>
+
+          <div className="mt-4 min-w-0">
+            <h1 className="text-2xl leading-tight sm:text-3xl">{title}</h1>
             {subtitle ? (
-              <p className="mt-1.5 text-[13px] leading-snug text-primary-foreground/80 sm:text-sm">
+              <p className="mt-1.5 max-w-xl text-[13px] leading-snug text-primary-foreground/80 sm:text-sm">
                 {subtitle}
               </p>
             ) : null}
-          </div>
-
-          <div className="flex shrink-0 items-center gap-2">
-            {profile?.role === "market_admin" ? (
-              <Link
-                to="/admin"
-                className="grid h-10 w-10 place-items-center rounded-2xl bg-card text-primary shadow-sm"
-                aria-label="Market admin console"
-              >
-                <Settings className="h-5 w-5" />
-              </Link>
-            ) : null}
-            {manager ? (
-              <Link
-                to="/manager"
-                className="grid h-10 w-10 place-items-center rounded-2xl bg-accent text-accent-foreground shadow-sm"
-                aria-label="Manager tools"
-              >
-                <ShieldCheck className="h-5 w-5" />
-              </Link>
-            ) : null}
-            {action}
           </div>
         </div>
       </header>
