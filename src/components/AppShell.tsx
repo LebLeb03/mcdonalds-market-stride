@@ -36,7 +36,7 @@ export function AppShell({
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      <header className="hero-arches px-4 pb-16 pt-6 text-primary-foreground sm:px-8 sm:pb-14">
+      <header className="hero-arches px-4 pb-20 pt-6 text-primary-foreground sm:px-8 sm:pb-20">
         <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:gap-4">
           <div className="min-w-0">
             <img
