@@ -133,8 +133,6 @@ function PersonalDashboard() {
       </Card>
 
 
-
-
       <Card>
         <SectionTitle title="Last 7 days" />
         <StepsChart data={last7} />
