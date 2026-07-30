@@ -13,11 +13,11 @@ import { isManagerRole, useProfile } from "@/lib/data";
 import wordmark from "@/assets/mcd-wordmark.png.asset.json";
 
 const NAV = [
-  { to: "/", label: "Home", icon: Home },
-  { to: "/challenges", label: "Challenges", icon: Trophy },
-  { to: "/leaderboard", label: "Leaderboards", icon: ListOrdered },
-  { to: "/restaurants", label: "Restaurants", icon: StoreIcon },
-  { to: "/profile", label: "Profile", icon: UserIcon },
+  { to: "/", label: "Home", shortLabel: "Home", icon: Home },
+  { to: "/challenges", label: "Challenges", shortLabel: "Goals", icon: Trophy },
+  { to: "/leaderboard", label: "Leaderboards", shortLabel: "Ranks", icon: ListOrdered },
+  { to: "/restaurants", label: "Restaurants", shortLabel: "Stores", icon: StoreIcon },
+  { to: "/profile", label: "Profile", shortLabel: "You", icon: UserIcon },
 ] as const;
 
 export function AppShell({
