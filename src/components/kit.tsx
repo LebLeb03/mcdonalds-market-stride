@@ -45,10 +45,10 @@ export function Stat({
         : "bg-card text-card-foreground";
   return (
     <div className={`surface-card px-4 py-3.5 ${toneClass}`}>
-      <p className="text-[11px] font-semibold uppercase leading-tight tracking-wide opacity-70">
+      <p className="text-[10px] font-semibold uppercase leading-tight tracking-wide opacity-70 sm:text-[11px]">
         {label}
       </p>
-      <p className="mt-1.5 text-xl font-black leading-none tabular-nums sm:text-2xl">
+      <p className="mt-1.5 text-lg font-black leading-none tabular-nums sm:text-2xl">
         {typeof value === "number" ? fmt(value) : value}
       </p>
       {hint ? <p className="mt-1.5 text-[11px] leading-tight opacity-70">{hint}</p> : null}
