@@ -35,19 +35,21 @@ export function AppShell({
   const manager = isManagerRole(profile?.role);
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <header className="hero-arches px-4 pb-8 pt-6 text-primary-foreground sm:px-8">
-        <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
+    <div className="min-h-screen bg-background pb-28">
+      <header className="hero-arches px-4 pb-12 pt-6 text-primary-foreground sm:px-8 sm:pb-14">
+        <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:gap-4">
           <div className="min-w-0">
             <img
               src={wordmark.url}
               alt="McDonald's"
-              className="h-7 w-auto sm:h-8"
+              className="h-6 w-auto sm:h-8"
               loading="eager"
             />
-            <h1 className="mt-2 truncate text-2xl sm:text-3xl">{title}</h1>
+            <h1 className="mt-3 truncate text-xl leading-tight sm:text-3xl">{title}</h1>
             {subtitle ? (
-              <p className="mt-1 text-sm text-primary-foreground/80">{subtitle}</p>
+              <p className="mt-1.5 text-[13px] leading-snug text-primary-foreground/80 sm:text-sm">
+                {subtitle}
+              </p>
             ) : null}
           </div>
 
@@ -75,7 +77,9 @@ export function AppShell({
         </div>
       </header>
 
-      <main className="mx-auto -mt-4 max-w-6xl space-y-5 px-4 pb-2 sm:px-8">{children}</main>
+      <main className="mx-auto -mt-8 max-w-6xl space-y-4 px-4 pb-4 sm:space-y-6 sm:px-8">
+        {children}
+      </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-stretch justify-between px-2 py-1">
