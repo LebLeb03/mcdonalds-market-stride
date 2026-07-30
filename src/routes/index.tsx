@@ -91,22 +91,22 @@ function PersonalDashboard() {
       }
     >
       <Card className="animate-pop">
-        <div className="flex flex-wrap items-center justify-center gap-6 sm:flex-nowrap sm:justify-between">
+        <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
           <ProgressRing
             progress={(me?.today ?? 0) / (profile.daily_goal || 10000)}
             label={fmt(me?.today ?? 0)}
             sublabel={`of ${fmt(profile.daily_goal)} daily goal`}
           />
-          <div className="grid min-w-0 flex-1 grid-cols-2 gap-3">
+          <div className="grid w-full min-w-0 flex-1 grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
             <Stat label="This week" value={me?.week ?? 0} />
             <Stat label="This month" value={me?.month ?? 0} />
             <Stat label="Challenge total" value={me?.total ?? 0} tone="accent" />
             <Stat label="Daily average" value={me?.dailyAverage ?? 0} />
           </div>
         </div>
-        <div className="mt-5 grid grid-cols-3 gap-3">
-          <div className="rounded-2xl bg-muted px-3 py-3.5 text-center">
-            <p className="text-[11px] font-bold uppercase leading-tight text-muted-foreground">
+        <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
+          <div className="rounded-2xl bg-muted px-2.5 py-3 text-center sm:px-3 sm:py-3.5">
+            <p className="text-[10px] font-bold uppercase leading-tight text-muted-foreground sm:text-[11px]">
               Market rank
             </p>
             <p className="mt-1.5 text-lg font-black leading-none">#{me?.marketRank ?? "—"}</p>
@@ -114,14 +114,14 @@ function PersonalDashboard() {
               <RankMove change={me?.rankChange ?? 0} />
             </div>
           </div>
-          <div className="rounded-2xl bg-muted px-3 py-3.5 text-center">
-            <p className="text-[11px] font-bold uppercase leading-tight text-muted-foreground">
+          <div className="rounded-2xl bg-muted px-2.5 py-3 text-center sm:px-3 sm:py-3.5">
+            <p className="text-[10px] font-bold uppercase leading-tight text-muted-foreground sm:text-[11px]">
               Store rank
             </p>
             <p className="mt-1.5 text-lg font-black leading-none">#{me?.storeRank ?? "—"}</p>
           </div>
-          <div className="rounded-2xl bg-muted px-3 py-3.5 text-center">
-            <p className="text-[11px] font-bold uppercase leading-tight text-muted-foreground">
+          <div className="rounded-2xl bg-muted px-2.5 py-3 text-center sm:px-3 sm:py-3.5">
+            <p className="text-[10px] font-bold uppercase leading-tight text-muted-foreground sm:text-[11px]">
               Streak
             </p>
             <p className="mt-1.5 inline-flex items-center gap-1 text-lg font-black leading-none">
@@ -176,7 +176,7 @@ function PersonalDashboard() {
               </Link>
             }
           />
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
             <Stat label="Market rank" value={`#${storeStats.rank}`} tone="primary" />
             <Stat label="Team steps" value={storeStats.total} />
             <Stat label="Participation" value={`${Math.round(storeStats.participation)}%`} />
@@ -238,7 +238,7 @@ function PersonalDashboard() {
           <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
             Your personal competition stats stay above — these are your store leader tools.
           </p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
             {[
               { to: "/manager", label: "Pending approvals", icon: ClipboardCheck },
               { to: "/manager", label: "Crew participation", icon: Users },
