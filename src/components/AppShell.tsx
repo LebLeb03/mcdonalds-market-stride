@@ -13,11 +13,11 @@ import { isManagerRole, useProfile } from "@/lib/data";
 import wordmark from "@/assets/mcd-wordmark.png.asset.json";
 
 const NAV = [
-  { to: "/", label: "Home", icon: Home },
-  { to: "/challenges", label: "Challenges", icon: Trophy },
-  { to: "/leaderboard", label: "Leaderboards", icon: ListOrdered },
-  { to: "/restaurants", label: "Restaurants", icon: StoreIcon },
-  { to: "/profile", label: "Profile", icon: UserIcon },
+  { to: "/", label: "Home", shortLabel: "Home", icon: Home },
+  { to: "/challenges", label: "Challenges", shortLabel: "Goals", icon: Trophy },
+  { to: "/leaderboard", label: "Leaderboards", shortLabel: "Ranks", icon: ListOrdered },
+  { to: "/restaurants", label: "Restaurants", shortLabel: "Stores", icon: StoreIcon },
+  { to: "/profile", label: "Profile", shortLabel: "You", icon: UserIcon },
 ] as const;
 
 export function AppShell({
@@ -81,17 +81,21 @@ export function AppShell({
         {children}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-2xl items-stretch justify-between px-2 py-1">
-          {NAV.map(({ to, label, icon: Icon }) => (
+      <nav
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        <div className="mx-auto grid max-w-2xl grid-cols-5 items-stretch gap-1 px-1.5 py-1.5 sm:gap-2 sm:px-3">
+          {NAV.map(({ to, label, shortLabel, icon: Icon }) => (
             <Link
               key={to}
               to={to}
               activeOptions={{ exact: to === "/" }}
-              className="flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-2 text-[11px] font-semibold text-muted-foreground transition-colors data-[status=active]:text-primary"
+              className="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-1.5 text-center text-[10px] font-semibold leading-none text-muted-foreground transition-colors data-[status=active]:bg-muted data-[status=active]:text-primary sm:text-[11px]"
             >
-              <Icon className="h-5 w-5" />
-              <span className="truncate">{label}</span>
+              <Icon className="h-5 w-5 shrink-0" />
+              <span className="w-full truncate sm:hidden">{shortLabel}</span>
+              <span className="hidden w-full truncate sm:inline">{label}</span>
             </Link>
           ))}
         </div>
