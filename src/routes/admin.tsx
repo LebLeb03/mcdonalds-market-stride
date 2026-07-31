@@ -37,6 +37,7 @@ function AdminPage() {
   const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [tab, setTab] = useState<"people" | "codes">("people");
+  const [editing, setEditing] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
   const [newStore, setNewStore] = useState({
     store_name: "",
