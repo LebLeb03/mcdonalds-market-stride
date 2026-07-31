@@ -96,6 +96,27 @@ function AdminPage() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not create restaurant"),
   });
 
+  const setStoreCode = useMutation({
+    mutationFn: async (input: { storeId: string; code: string }) => {
+      const { error } = await supabase.rpc("admin_set_store_code", {
+        _store_id: input.storeId,
+        _code: input.code,
+      });
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      toast.success("Join code updated");
+      setEditing((s) => {
+        const next = { ...s };
+        delete next[v.storeId];
+        return next;
+      });
+      qc.invalidateQueries({ queryKey: ["store-invite-code"] });
+      qc.invalidateQueries({ queryKey: ["market-data"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not update code"),
+  });
+
   const deleteStore = useMutation({
     mutationFn: async (storeId: string) => {
       const { error } = await supabase.rpc("admin_delete_store", { _store_id: storeId });
