@@ -37,6 +37,7 @@ function AdminPage() {
   const { data: profile, user, sessionLoading } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [tab, setTab] = useState<"people" | "codes">("people");
+  const [editing, setEditing] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
   const [newStore, setNewStore] = useState({
     store_name: "",
@@ -94,6 +95,27 @@ function AdminPage() {
       qc.invalidateQueries({ queryKey: ["market-data"] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not create restaurant"),
+  });
+
+  const setStoreCode = useMutation({
+    mutationFn: async (input: { storeId: string; code: string }) => {
+      const { error } = await supabase.rpc("admin_set_store_code", {
+        _store_id: input.storeId,
+        _code: input.code,
+      });
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      toast.success("Join code updated");
+      setEditing((s) => {
+        const next = { ...s };
+        delete next[v.storeId];
+        return next;
+      });
+      qc.invalidateQueries({ queryKey: ["store-invite-code"] });
+      qc.invalidateQueries({ queryKey: ["market-data"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not update code"),
   });
 
   const deleteStore = useMutation({
@@ -294,46 +316,79 @@ function AdminPage() {
               {market.stores.map((s, i) => {
                 const code = codeQueries[i]?.data ?? null;
                 return (
-                  <li key={s.id} className="flex items-center gap-2 py-3">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-bold">{s.store_name}</p>
-                      <p className="truncate text-xs text-muted-foreground">
-                        #{s.store_number} · {s.city ?? "—"}
-                      </p>
-                    </div>
-                    <code className="rounded-lg bg-muted px-2 py-1 text-xs font-black tracking-widest">
-                      {code ?? "…"}
-                    </code>
-                    <button
-                      type="button"
-                      aria-label={`Copy code for ${s.store_name}`}
-                      disabled={!code}
-                      onClick={() => {
-                        if (!code) return;
-                        void navigator.clipboard.writeText(code);
-                        toast.success("Code copied");
-                      }}
-                      className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-secondary text-secondary-foreground disabled:opacity-50"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Delete ${s.store_name}`}
-                      disabled={deleteStore.isPending}
-                      onClick={() => {
-                        if (
-                          !window.confirm(
-                            `Delete ${s.store_name}? Team members will be unassigned from it.`,
+                  <li key={s.id} className="py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold">{s.store_name}</p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          #{s.store_number} · {s.city ?? "—"}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        aria-label={`Copy code for ${s.store_name}`}
+                        disabled={!code}
+                        onClick={() => {
+                          if (!code) return;
+                          void navigator.clipboard.writeText(code);
+                          toast.success("Code copied");
+                        }}
+                        className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-secondary text-secondary-foreground disabled:opacity-50"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Delete ${s.store_name}`}
+                        disabled={deleteStore.isPending}
+                        onClick={() => {
+                          if (
+                            !window.confirm(
+                              `Delete ${s.store_name}? Team members will be unassigned from it.`,
+                            )
                           )
-                        )
+                            return;
+                          deleteStore.mutate(s.id);
+                        }}
+                        className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-destructive text-destructive-foreground disabled:opacity-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <form
+                      className="mt-2 flex items-center gap-2"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        const next = (editing[s.id] ?? code ?? "").trim().toUpperCase();
+                        if (!/^[A-Z0-9]{4,12}$/.test(next)) {
+                          toast.error("Code must be 4–12 letters or numbers");
                           return;
-                        deleteStore.mutate(s.id);
+                        }
+                        if (next === (code ?? "")) return;
+                        setStoreCode.mutate({ storeId: s.id, code: next });
                       }}
-                      className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-destructive text-destructive-foreground disabled:opacity-50"
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                      <input
+                        aria-label={`Join code for ${s.store_name}`}
+                        value={editing[s.id] ?? code ?? ""}
+                        onChange={(e) =>
+                          setEditing((st) => ({
+                            ...st,
+                            [s.id]: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""),
+                          }))
+                        }
+                        maxLength={12}
+                        placeholder="Join code"
+                        className="min-w-0 flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm font-black tracking-[0.2em] outline-none focus:ring-2 focus:ring-ring"
+                      />
+                      <button
+                        type="submit"
+                        disabled={setStoreCode.isPending || (editing[s.id] ?? code ?? "") === (code ?? "")}
+                        className="shrink-0 rounded-xl bg-primary px-3 py-2 text-xs font-black text-primary-foreground disabled:opacity-50"
+                      >
+                        Save
+                      </button>
+                    </form>
                   </li>
                 );
               })}

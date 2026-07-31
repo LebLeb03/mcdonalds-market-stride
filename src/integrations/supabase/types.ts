@@ -729,6 +729,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      admin_set_store_code: {
+        Args: { _code: string; _store_id: string }
+        Returns: string
+      }
       can_manage_store: { Args: { _store_id: string }; Returns: boolean }
       current_market_id: { Args: never; Returns: string }
       current_store_id: { Args: never; Returns: string }
