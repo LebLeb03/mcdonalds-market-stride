@@ -88,7 +88,7 @@ function JoinPage() {
                 required
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
-                placeholder="RIVER42"
+                placeholder="5178"
                 className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-3 text-center text-lg font-black tracking-[0.25em] outline-none focus:ring-2 focus:ring-ring"
               />
             </label>
