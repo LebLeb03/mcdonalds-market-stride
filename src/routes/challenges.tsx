@@ -1,17 +1,23 @@
-import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CalendarDays, Gift, Trophy, Info } from "lucide-react";
+import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { CalendarDays, Gift, Trophy, Info, Plus, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   CHALLENGE_TYPE_LABEL,
   SCORING_LABEL,
   fmt,
+  isManagerRole,
   scoreForMethod,
+  todayISO,
   useMarketData,
   useAppGuard,
   type Challenge,
 } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import { Card, EmptyState, Loading, Pills, ProgressBar, SectionTitle } from "@/components/kit";
+
 
 export const Route = createFileRoute("/challenges")({
   head: () => ({
