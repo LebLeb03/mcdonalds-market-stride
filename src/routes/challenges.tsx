@@ -1,17 +1,25 @@
-import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CalendarDays, Gift, Trophy, Info } from "lucide-react";
+import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { CalendarDays, Gift, Trophy, Info, Plus, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
 import {
   CHALLENGE_TYPE_LABEL,
   SCORING_LABEL,
   fmt,
+  isManagerRole,
   scoreForMethod,
+  todayISO,
   useMarketData,
   useAppGuard,
   type Challenge,
 } from "@/lib/data";
 import { AppShell } from "@/components/AppShell";
 import { Card, EmptyState, Loading, Pills, ProgressBar, SectionTitle } from "@/components/kit";
+
 
 export const Route = createFileRoute("/challenges")({
   head: () => ({
@@ -39,12 +47,307 @@ function daysLeft(c: Challenge) {
   );
 }
 
+const TYPES = Object.keys(CHALLENGE_TYPE_LABEL);
+const METHODS = Object.keys(SCORING_LABEL);
+
+const addDaysISO = (from: string, n: number) => {
+  const d = new Date(`${from}T00:00:00`);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+
+type Draft = {
+  title: string;
+  description: string;
+  challenge_type: string;
+  challenge_level: "market" | "store";
+  scoring_method: string;
+  start_date: string;
+  end_date: string;
+  personal_step_goal: number;
+  store_step_goal: number;
+  maximum_daily_steps: number;
+  reward_title: string;
+  reward_description: string;
+  rules: string;
+};
+
+const emptyDraft = (): Draft => ({
+  title: "",
+  description: "",
+  challenge_type: "weekly_step_challenge",
+  challenge_level: "market",
+  scoring_method: "avg_per_active_participant",
+  start_date: todayISO(),
+  end_date: addDaysISO(todayISO(), 6),
+  personal_step_goal: 70000,
+  store_step_goal: 1000000,
+  maximum_daily_steps: 60000,
+  reward_title: "",
+  reward_description: "",
+  rules: "",
+});
+
+const field =
+  "w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm font-semibold outline-none focus:ring-2 focus:ring-ring";
+const label = "text-[11px] font-black uppercase tracking-wide text-muted-foreground";
+
+function CreateChallenge({ marketId, userId }: { marketId: string; userId: string }) {
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [d, setD] = useState<Draft>(emptyDraft);
+  const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((p) => ({ ...p, [k]: v }));
+
+  const create = useMutation({
+    mutationFn: async () => {
+      if (!d.title.trim()) throw new Error("Give the challenge a title");
+      if (d.end_date < d.start_date) throw new Error("End date must be after the start date");
+      const { error } = await supabase.from("challenges").insert({
+        market_id: marketId,
+        created_by: userId,
+        title: d.title.trim(),
+        description: d.description.trim() || null,
+        challenge_type: d.challenge_type,
+        challenge_level: d.challenge_level,
+        scoring_method: d.scoring_method as Database["public"]["Enums"]["scoring_method"],
+        start_date: d.start_date,
+        end_date: d.end_date,
+        status: d.start_date > todayISO() ? "upcoming" : "active",
+        personal_step_goal: d.personal_step_goal,
+        store_step_goal: d.store_step_goal,
+        maximum_daily_steps: d.maximum_daily_steps,
+        reward_title: d.reward_title.trim() || null,
+        reward_description: d.reward_description.trim() || null,
+        rules: d.rules.trim() || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Challenge created");
+      setD(emptyDraft());
+      setOpen(false);
+      qc.invalidateQueries({ queryKey: ["market-data"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not create challenge"),
+  });
+
+  const preset = (days: number) => {
+    const start = todayISO();
+    setD((p) => ({ ...p, start_date: start, end_date: addDaysISO(start, days - 1) }));
+  };
+
+  return (
+    <Card>
+      <SectionTitle
+        title="Create a challenge"
+        right={
+          <button
+            onClick={() => setOpen((o) => !o)}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-black text-primary-foreground"
+          >
+            {open ? <X className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+            {open ? "Close" : "New challenge"}
+          </button>
+        }
+      />
+      {!open ? (
+        <p className="text-xs text-muted-foreground">
+          Set a title, a start and end date, and the goals your teams are chasing.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          <div>
+            <p className={label}>Title</p>
+            <input
+              className={field}
+              value={d.title}
+              onChange={(e) => set("title", e.target.value)}
+              placeholder="August Step Sprint"
+            />
+          </div>
+          <div>
+            <p className={label}>Description</p>
+            <textarea
+              className={`${field} min-h-20`}
+              value={d.description}
+              onChange={(e) => set("description", e.target.value)}
+              placeholder="What this challenge is about"
+            />
+          </div>
+
+          <div>
+            <p className={label}>Challenge period</p>
+            <div className="mt-1 flex flex-wrap gap-2">
+              {[
+                { d: 7, l: "1 week" },
+                { d: 14, l: "2 weeks" },
+                { d: 30, l: "30 days" },
+              ].map((p) => (
+                <button
+                  key={p.d}
+                  onClick={() => preset(p.d)}
+                  className="rounded-full bg-muted px-3 py-1.5 text-[11px] font-black"
+                >
+                  {p.l}
+                </button>
+              ))}
+            </div>
+            <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <input
+                type="date"
+                className={field}
+                value={d.start_date}
+                onChange={(e) => set("start_date", e.target.value)}
+              />
+              <input
+                type="date"
+                className={field}
+                value={d.end_date}
+                min={d.start_date}
+                onChange={(e) => set("end_date", e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div>
+              <p className={label}>Type</p>
+              <select
+                className={field}
+                value={d.challenge_type}
+                onChange={(e) => set("challenge_type", e.target.value)}
+              >
+                {TYPES.map((t) => (
+                  <option key={t} value={t}>
+                    {CHALLENGE_TYPE_LABEL[t]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <p className={label}>Level</p>
+              <select
+                className={field}
+                value={d.challenge_level}
+                onChange={(e) => set("challenge_level", e.target.value as Draft["challenge_level"])}
+              >
+                <option value="market">Market wide</option>
+                <option value="store">Restaurant</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <p className={label}>Scoring</p>
+            <select
+              className={field}
+              value={d.scoring_method}
+              onChange={(e) => set("scoring_method", e.target.value)}
+            >
+              {METHODS.map((m) => (
+                <option key={m} value={m}>
+                  {SCORING_LABEL[m]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div>
+              <p className={label}>Personal goal</p>
+              <input
+                type="number"
+                className={field}
+                value={d.personal_step_goal}
+                onChange={(e) => set("personal_step_goal", Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <p className={label}>Restaurant goal</p>
+              <input
+                type="number"
+                className={field}
+                value={d.store_step_goal}
+                onChange={(e) => set("store_step_goal", Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <p className={label}>Daily review over</p>
+              <input
+                type="number"
+                className={field}
+                value={d.maximum_daily_steps}
+                onChange={(e) => set("maximum_daily_steps", Number(e.target.value))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div>
+              <p className={label}>Reward title</p>
+              <input
+                className={field}
+                value={d.reward_title}
+                onChange={(e) => set("reward_title", e.target.value)}
+                placeholder="Team lunch"
+              />
+            </div>
+            <div>
+              <p className={label}>Reward details</p>
+              <input
+                className={field}
+                value={d.reward_description}
+                onChange={(e) => set("reward_description", e.target.value)}
+                placeholder="Winning restaurant gets…"
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className={label}>Rules</p>
+            <textarea
+              className={`${field} min-h-20`}
+              value={d.rules}
+              onChange={(e) => set("rules", e.target.value)}
+              placeholder="One entry per day, manager approval over the daily cap…"
+            />
+          </div>
+
+          <button
+            onClick={() => create.mutate()}
+            disabled={create.isPending}
+            className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground disabled:opacity-60"
+          >
+            {create.isPending ? "Creating…" : "Create challenge"}
+          </button>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 function ChallengesPage() {
-  const navigate = useNavigate();
-  const { data: profile, user, sessionLoading } = useAppGuard();
+  const qc = useQueryClient();
+  const { data: profile, user } = useAppGuard();
   const { data: market, isLoading } = useMarketData(profile?.market_id);
   const [tab, setTab] = useState<"active" | "upcoming" | "completed">("active");
   const [openId, setOpenId] = useState<string | null>(null);
+  const canManage = isManagerRole(profile?.role);
+
+  const endNow = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("challenges")
+        .update({ end_date: todayISO(), status: "completed" })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Challenge closed");
+      qc.invalidateQueries({ queryKey: ["market-data"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not close challenge"),
+  });
 
   if (isLoading || !market) {
     return (
@@ -54,7 +357,7 @@ function ChallengesPage() {
     );
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayISO();
   const list = market.challenges.filter((c) =>
     tab === "active"
       ? c.start_date <= today && c.end_date >= today
@@ -67,6 +370,10 @@ function ChallengesPage() {
 
   return (
     <AppShell title="Challenges" subtitle={market.market.market_name}>
+      {canManage && profile?.market_id && user ? (
+        <CreateChallenge marketId={profile.market_id} userId={user.id} />
+      ) : null}
+
       <Card>
         <Pills
           value={tab}
@@ -78,6 +385,7 @@ function ChallengesPage() {
           ]}
         />
       </Card>
+
 
       {list.length === 0 ? (
         <EmptyState title="Nothing here yet" message="No challenges in this category right now." />
@@ -140,12 +448,24 @@ function ChallengesPage() {
               </div>
             ) : null}
 
-            <button
-              onClick={() => setOpenId(open ? null : c.id)}
-              className="mt-3 w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-black text-accent-foreground"
-            >
-              {open ? "Hide details" : "View details"}
-            </button>
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <button
+                onClick={() => setOpenId(open ? null : c.id)}
+                className="w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-black text-accent-foreground"
+              >
+                {open ? "Hide details" : "View details"}
+              </button>
+              {canManage && c.end_date >= today ? (
+                <button
+                  onClick={() => endNow.mutate(c.id)}
+                  disabled={endNow.isPending}
+                  className="w-full rounded-xl border border-input px-4 py-2.5 text-sm font-black disabled:opacity-60"
+                >
+                  End challenge now
+                </button>
+              ) : null}
+            </div>
+
 
             {open ? (
               <div className="mt-3 space-y-3">
