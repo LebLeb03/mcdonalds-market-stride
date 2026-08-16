@@ -107,7 +107,7 @@ function CreateChallenge({ marketId, userId }: { marketId: string; userId: strin
         description: d.description.trim() || null,
         challenge_type: d.challenge_type,
         challenge_level: d.challenge_level,
-        scoring_method: d.scoring_method,
+        scoring_method: d.scoring_method as Challenge["scoring_method"] & "total_steps",
         start_date: d.start_date,
         end_date: d.end_date,
         status: d.start_date > todayISO() ? "upcoming" : "active",
