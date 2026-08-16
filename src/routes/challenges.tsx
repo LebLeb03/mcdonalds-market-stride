@@ -448,12 +448,24 @@ function ChallengesPage() {
               </div>
             ) : null}
 
-            <button
-              onClick={() => setOpenId(open ? null : c.id)}
-              className="mt-3 w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-black text-accent-foreground"
-            >
-              {open ? "Hide details" : "View details"}
-            </button>
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <button
+                onClick={() => setOpenId(open ? null : c.id)}
+                className="w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-black text-accent-foreground"
+              >
+                {open ? "Hide details" : "View details"}
+              </button>
+              {canManage && c.end_date >= today ? (
+                <button
+                  onClick={() => endNow.mutate(c.id)}
+                  disabled={endNow.isPending}
+                  className="w-full rounded-xl border border-input px-4 py-2.5 text-sm font-black disabled:opacity-60"
+                >
+                  End challenge now
+                </button>
+              ) : null}
+            </div>
+
 
             {open ? (
               <div className="mt-3 space-y-3">
